@@ -1,0 +1,505 @@
+{
+  "historia": "HU-01",
+  "casos": [
+    {
+      "id": "CP-01",
+      "escenario": "Registro exitoso de un empleado con número asignado por el sistema",
+      "nivel": "api",
+      "precondiciones": [
+        "La API responde en GET /api/salud con {\"estado\": \"ok\"}",
+        "Base de datos con 7 empleados registrados, el último con numero_empleado \"EMP-0007\"",
+        "No existe ningún empleado con correo \"ana.lopez@empresa.com\" (verificado con GET /api/empleados)"
+      ],
+      "pasos": [
+        "Enviar POST /api/empleados con cuerpo {\"nombre\": \"Ana López\", \"correo\": \"ana.lopez@empresa.com\", \"puesto\": \"Analista de Datos\", \"departamento\": \"Tecnología\", \"fecha_ingreso\": \"2024-03-15\"}",
+        "Verificar el código de respuesta",
+        "Verificar en el cuerpo de la respuesta los campos numero_empleado, estado y creado_en",
+        "Consultar GET /api/empleados y verificar que el empleado aparece con los datos enviados"
+      ],
+      "datos": {
+        "nombre": "Ana López",
+        "correo": "ana.lopez@empresa.com",
+        "puesto": "Analista de Datos",
+        "departamento": "Tecnología",
+        "fecha_ingreso": "2024-03-15",
+        "codigo_esperado": "201",
+        "numero_empleado_esperado": "EMP-0008",
+        "estado_esperado": "activo"
+      },
+      "resultado_esperado": "La respuesta tiene código 201 (supuesto, ver preguntas abiertas); el empleado queda guardado con numero_empleado \"EMP-0008\", estado \"activo\" y un valor creado_en no vacío asignado por el sistema; GET /api/empleados lo devuelve con los datos enviados."
+    },
+    {
+      "id": "CP-02",
+      "escenario": "Registro exitoso de un empleado con número asignado por el sistema",
+      "nivel": "e2e",
+      "precondiciones": [
+        "Frontend y backend levantados; la pantalla de registro de empleado está abierta",
+        "Base de datos con 7 empleados registrados, el último con numero_empleado \"EMP-0007\"",
+        "No existe ningún empleado con correo \"ana.lopez@empresa.com\""
+      ],
+      "pasos": [
+        "Escribir \"Ana López\" en el campo data-testid=\"empleado-nombre\"",
+        "Escribir \"ana.lopez@empresa.com\" en data-testid=\"empleado-correo\"",
+        "Escribir \"Analista de Datos\" en data-testid=\"empleado-puesto\"",
+        "Seleccionar \"Tecnología\" en data-testid=\"empleado-departamento\"",
+        "Escribir \"2024-03-15\" en data-testid=\"empleado-fecha-ingreso\"",
+        "Pulsar el botón data-testid=\"empleado-guardar\"",
+        "Verificar que se muestra data-testid=\"mensaje-exito\" y que su texto contiene \"EMP-0008\"",
+        "Verificar que no se muestra data-testid=\"mensaje-error\""
+      ],
+      "datos": {
+        "nombre": "Ana López",
+        "correo": "ana.lopez@empresa.com",
+        "puesto": "Analista de Datos",
+        "departamento": "Tecnología",
+        "fecha_ingreso": "2024-03-15",
+        "numero_empleado_esperado": "EMP-0008"
+      },
+      "resultado_esperado": "La pantalla muestra en mensaje-exito una confirmación que incluye el número \"EMP-0008\" y no aparece mensaje-error."
+    },
+    {
+      "id": "CP-03",
+      "escenario": "El formulario de registro no permite escribir el número de empleado",
+      "nivel": "api",
+      "precondiciones": [
+        "La API está disponible",
+        "Base de datos con 7 empleados registrados, el último con numero_empleado \"EMP-0007\"",
+        "No existe ningún empleado con correo \"pedro.salas@empresa.com\""
+      ],
+      "pasos": [
+        "Enviar POST /api/empleados con cuerpo {\"numero_empleado\": \"EMP-9999\", \"nombre\": \"Pedro Salas\", \"correo\": \"pedro.salas@empresa.com\", \"puesto\": \"Técnico de Soporte\", \"departamento\": \"Tecnología\", \"fecha_ingreso\": \"2024-06-03\"}",
+        "Verificar el código de respuesta y el numero_empleado devuelto",
+        "Consultar GET /api/empleados y verificar que no existe ningún empleado con numero_empleado \"EMP-9999\""
+      ],
+      "datos": {
+        "numero_empleado_enviado": "EMP-9999",
+        "nombre": "Pedro Salas",
+        "correo": "pedro.salas@empresa.com",
+        "puesto": "Técnico de Soporte",
+        "departamento": "Tecnología",
+        "fecha_ingreso": "2024-06-03",
+        "codigo_esperado": "201",
+        "numero_empleado_esperado": "EMP-0008"
+      },
+      "resultado_esperado": "El sistema ignora el numero_empleado enviado por el cliente: el empleado queda con numero_empleado \"EMP-0008\" asignado por el sistema y no existe ningún empleado \"EMP-9999\"."
+    },
+    {
+      "id": "CP-04",
+      "escenario": "El formulario de registro no permite escribir el número de empleado",
+      "nivel": "e2e",
+      "precondiciones": [
+        "Frontend y backend levantados",
+        "La pantalla de registro de empleado está abierta"
+      ],
+      "pasos": [
+        "Verificar que son visibles los campos data-testid=\"empleado-nombre\", \"empleado-correo\", \"empleado-puesto\", \"empleado-departamento\" y \"empleado-fecha-ingreso\"",
+        "Verificar que es visible el botón data-testid=\"empleado-guardar\"",
+        "Verificar que dentro del formulario no existe ningún campo editable (input, select o textarea) distinto de los cinco anteriores",
+        "Verificar que no existe ningún campo con data-testid que contenga \"numero-empleado\" dentro del formulario"
+      ],
+      "datos": {
+        "campos_esperados": "empleado-nombre, empleado-correo, empleado-puesto, empleado-departamento, empleado-fecha-ingreso",
+        "campo_prohibido": "numero_empleado"
+      },
+      "resultado_esperado": "El formulario muestra exactamente los campos nombre, correo, puesto, departamento y fecha de ingreso, y no muestra ningún campo para escribir el número de empleado."
+    },
+    {
+      "id": "CP-05",
+      "escenario": "El correo se guarda en minúsculas",
+      "nivel": "api",
+      "precondiciones": [
+        "La API está disponible",
+        "No existe ningún empleado con correo \"carlos.ruiz@empresa.com\""
+      ],
+      "pasos": [
+        "Enviar POST /api/empleados con cuerpo {\"nombre\": \"Carlos Ruiz\", \"correo\": \"Carlos.Ruiz@Empresa.com\", \"puesto\": \"Vendedor\", \"departamento\": \"Ventas\", \"fecha_ingreso\": \"2024-01-10\"}",
+        "Verificar el código de respuesta y el campo correo devuelto",
+        "Consultar GET /api/empleados y verificar el correo almacenado del empleado \"Carlos Ruiz\""
+      ],
+      "datos": {
+        "nombre": "Carlos Ruiz",
+        "correo": "Carlos.Ruiz@Empresa.com",
+        "puesto": "Vendedor",
+        "departamento": "Ventas",
+        "fecha_ingreso": "2024-01-10",
+        "codigo_esperado": "201",
+        "correo_esperado": "carlos.ruiz@empresa.com"
+      },
+      "resultado_esperado": "El empleado queda registrado y tanto la respuesta como GET /api/empleados muestran el correo \"carlos.ruiz@empresa.com\" en minúsculas."
+    },
+    {
+      "id": "CP-06",
+      "escenario": "Correo duplicado sin importar mayúsculas",
+      "nivel": "api",
+      "precondiciones": [
+        "La API está disponible",
+        "Existe un empleado con correo \"ana.lopez@empresa.com\"",
+        "Se anota el total de empleados devuelto por GET /api/empleados antes de la prueba"
+      ],
+      "pasos": [
+        "Enviar POST /api/empleados con cuerpo {\"nombre\": \"Ana Lopez\", \"correo\": \"ANA.LOPEZ@empresa.com\", \"puesto\": \"Contadora\", \"departamento\": \"Finanzas\", \"fecha_ingreso\": \"2024-02-01\"}",
+        "Verificar el código de respuesta y el campo detail",
+        "Consultar GET /api/empleados y comparar el total con el anotado"
+      ],
+      "datos": {
+        "nombre": "Ana Lopez",
+        "correo": "ANA.LOPEZ@empresa.com",
+        "puesto": "Contadora",
+        "departamento": "Finanzas",
+        "fecha_ingreso": "2024-02-01",
+        "codigo_esperado": "409",
+        "mensaje_esperado": "El correo ya está registrado"
+      },
+      "resultado_esperado": "La respuesta tiene código 409 con {\"detail\": \"El correo ya está registrado\"} y el total de empleados no cambia."
+    },
+    {
+      "id": "CP-07",
+      "escenario": "Correo duplicado sin importar mayúsculas",
+      "nivel": "e2e",
+      "precondiciones": [
+        "Frontend y backend levantados; la pantalla de registro de empleado está abierta",
+        "Existe un empleado con correo \"ana.lopez@empresa.com\""
+      ],
+      "pasos": [
+        "Escribir \"Ana Lopez\" en data-testid=\"empleado-nombre\"",
+        "Escribir \"ANA.LOPEZ@empresa.com\" en data-testid=\"empleado-correo\"",
+        "Escribir \"Contadora\" en data-testid=\"empleado-puesto\"",
+        "Seleccionar \"Finanzas\" en data-testid=\"empleado-departamento\"",
+        "Escribir \"2024-02-01\" en data-testid=\"empleado-fecha-ingreso\"",
+        "Pulsar data-testid=\"empleado-guardar\"",
+        "Verificar que data-testid=\"mensaje-error\" muestra el texto \"El correo ya está registrado\"",
+        "Verificar que no se muestra data-testid=\"mensaje-exito\""
+      ],
+      "datos": {
+        "nombre": "Ana Lopez",
+        "correo": "ANA.LOPEZ@empresa.com",
+        "puesto": "Contadora",
+        "departamento": "Finanzas",
+        "fecha_ingreso": "2024-02-01",
+        "mensaje_esperado": "El correo ya está registrado"
+      },
+      "resultado_esperado": "La pantalla muestra en mensaje-error \"El correo ya está registrado\", no aparece mensaje-exito y no se registra ningún empleado nuevo."
+    },
+    {
+      "id": "CP-08",
+      "escenario": "Correo que no es corporativo",
+      "nivel": "api",
+      "precondiciones": [
+        "La API está disponible",
+        "No existe ningún empleado con correo \"luis.perez@gmail.com\"",
+        "Se anota el total de empleados devuelto por GET /api/empleados antes de la prueba"
+      ],
+      "pasos": [
+        "Enviar POST /api/empleados con cuerpo {\"nombre\": \"Luis Pérez\", \"correo\": \"luis.perez@gmail.com\", \"puesto\": \"Supervisor\", \"departamento\": \"Operaciones\", \"fecha_ingreso\": \"2024-05-20\"}",
+        "Verificar el código de respuesta y el campo detail",
+        "Consultar GET /api/empleados y comparar el total con el anotado"
+      ],
+      "datos": {
+        "nombre": "Luis Pérez",
+        "correo": "luis.perez@gmail.com",
+        "puesto": "Supervisor",
+        "departamento": "Operaciones",
+        "fecha_ingreso": "2024-05-20",
+        "codigo_esperado": "422",
+        "mensaje_esperado": "Usa el correo corporativo @empresa.com"
+      },
+      "resultado_esperado": "La respuesta tiene código 422 con {\"detail\": \"Usa el correo corporativo @empresa.com\"} y el total de empleados no cambia."
+    },
+    {
+      "id": "CP-09",
+      "escenario": "Correo que no es corporativo",
+      "nivel": "e2e",
+      "precondiciones": [
+        "Frontend y backend levantados; la pantalla de registro de empleado está abierta",
+        "No existe ningún empleado con correo \"luis.perez@gmail.com\""
+      ],
+      "pasos": [
+        "Escribir \"Luis Pérez\" en data-testid=\"empleado-nombre\"",
+        "Escribir \"luis.perez@gmail.com\" en data-testid=\"empleado-correo\"",
+        "Escribir \"Supervisor\" en data-testid=\"empleado-puesto\"",
+        "Seleccionar \"Operaciones\" en data-testid=\"empleado-departamento\"",
+        "Escribir \"2024-05-20\" en data-testid=\"empleado-fecha-ingreso\"",
+        "Pulsar data-testid=\"empleado-guardar\"",
+        "Verificar que data-testid=\"mensaje-error\" muestra el texto \"Usa el correo corporativo @empresa.com\"",
+        "Verificar que no se muestra data-testid=\"mensaje-exito\""
+      ],
+      "datos": {
+        "nombre": "Luis Pérez",
+        "correo": "luis.perez@gmail.com",
+        "puesto": "Supervisor",
+        "departamento": "Operaciones",
+        "fecha_ingreso": "2024-05-20",
+        "mensaje_esperado": "Usa el correo corporativo @empresa.com"
+      },
+      "resultado_esperado": "La pantalla muestra en mensaje-error \"Usa el correo corporativo @empresa.com\", no aparece mensaje-exito y no se registra ningún empleado nuevo."
+    },
+    {
+      "id": "CP-10",
+      "escenario": "Fecha de ingreso futura",
+      "nivel": "api",
+      "precondiciones": [
+        "La API está disponible",
+        "No existe ningún empleado con correo \"marta.diaz@empresa.com\"",
+        "Se anota el total de empleados devuelto por GET /api/empleados antes de la prueba"
+      ],
+      "pasos": [
+        "Enviar POST /api/empleados con cuerpo {\"nombre\": \"Marta Díaz\", \"correo\": \"marta.diaz@empresa.com\", \"puesto\": \"Reclutadora\", \"departamento\": \"Recursos Humanos\", \"fecha_ingreso\": \"2099-01-01\"}",
+        "Verificar el código de respuesta y el campo detail",
+        "Consultar GET /api/empleados y comparar el total con el anotado"
+      ],
+      "datos": {
+        "nombre": "Marta Díaz",
+        "correo": "marta.diaz@empresa.com",
+        "puesto": "Reclutadora",
+        "departamento": "Recursos Humanos",
+        "fecha_ingreso": "2099-01-01",
+        "codigo_esperado": "422",
+        "mensaje_esperado": "La fecha de ingreso no puede ser futura"
+      },
+      "resultado_esperado": "La respuesta tiene código 422 con {\"detail\": \"La fecha de ingreso no puede ser futura\"} y el total de empleados no cambia."
+    },
+    {
+      "id": "CP-11",
+      "escenario": "Fecha de ingreso futura",
+      "nivel": "e2e",
+      "precondiciones": [
+        "Frontend y backend levantados; la pantalla de registro de empleado está abierta",
+        "No existe ningún empleado con correo \"marta.diaz@empresa.com\""
+      ],
+      "pasos": [
+        "Escribir \"Marta Díaz\" en data-testid=\"empleado-nombre\"",
+        "Escribir \"marta.diaz@empresa.com\" en data-testid=\"empleado-correo\"",
+        "Escribir \"Reclutadora\" en data-testid=\"empleado-puesto\"",
+        "Seleccionar \"Recursos Humanos\" en data-testid=\"empleado-departamento\"",
+        "Escribir \"2099-01-01\" en data-testid=\"empleado-fecha-ingreso\"",
+        "Pulsar data-testid=\"empleado-guardar\"",
+        "Verificar que data-testid=\"mensaje-error\" muestra el texto \"La fecha de ingreso no puede ser futura\"",
+        "Verificar que no se muestra data-testid=\"mensaje-exito\""
+      ],
+      "datos": {
+        "nombre": "Marta Díaz",
+        "correo": "marta.diaz@empresa.com",
+        "puesto": "Reclutadora",
+        "departamento": "Recursos Humanos",
+        "fecha_ingreso": "2099-01-01",
+        "mensaje_esperado": "La fecha de ingreso no puede ser futura"
+      },
+      "resultado_esperado": "La pantalla muestra en mensaje-error \"La fecha de ingreso no puede ser futura\", no aparece mensaje-exito y no se registra ningún empleado nuevo."
+    },
+    {
+      "id": "CP-12",
+      "escenario": "Nombre demasiado corto",
+      "nivel": "api",
+      "precondiciones": [
+        "La API está disponible",
+        "No existe ningún empleado con correo \"x.gomez@empresa.com\"",
+        "Se anota el total de empleados devuelto por GET /api/empleados antes de la prueba"
+      ],
+      "pasos": [
+        "Enviar POST /api/empleados con cuerpo {\"nombre\": \"X\", \"correo\": \"x.gomez@empresa.com\", \"puesto\": \"Desarrollador\", \"departamento\": \"Tecnología\", \"fecha_ingreso\": \"2024-04-01\"}",
+        "Verificar el código de respuesta y que el error hace referencia al campo nombre",
+        "Consultar GET /api/empleados y comparar el total con el anotado"
+      ],
+      "datos": {
+        "nombre": "X",
+        "correo": "x.gomez@empresa.com",
+        "puesto": "Desarrollador",
+        "departamento": "Tecnología",
+        "fecha_ingreso": "2024-04-01",
+        "codigo_esperado": "422",
+        "campo_a_corregir": "nombre"
+      },
+      "resultado_esperado": "La respuesta tiene código 422, el error identifica el campo \"nombre\" y el total de empleados no cambia."
+    },
+    {
+      "id": "CP-13",
+      "escenario": "Nombre demasiado corto",
+      "nivel": "e2e",
+      "precondiciones": [
+        "Frontend y backend levantados; la pantalla de registro de empleado está abierta",
+        "No existe ningún empleado con correo \"x.gomez@empresa.com\""
+      ],
+      "pasos": [
+        "Escribir \"X\" en data-testid=\"empleado-nombre\"",
+        "Escribir \"x.gomez@empresa.com\" en data-testid=\"empleado-correo\"",
+        "Escribir \"Desarrollador\" en data-testid=\"empleado-puesto\"",
+        "Seleccionar \"Tecnología\" en data-testid=\"empleado-departamento\"",
+        "Escribir \"2024-04-01\" en data-testid=\"empleado-fecha-ingreso\"",
+        "Pulsar data-testid=\"empleado-guardar\"",
+        "Verificar que se muestra data-testid=\"mensaje-error\" y que su texto menciona el campo \"nombre\"",
+        "Verificar que no se muestra data-testid=\"mensaje-exito\""
+      ],
+      "datos": {
+        "nombre": "X",
+        "correo": "x.gomez@empresa.com",
+        "puesto": "Desarrollador",
+        "departamento": "Tecnología",
+        "fecha_ingreso": "2024-04-01",
+        "campo_a_corregir": "nombre"
+      },
+      "resultado_esperado": "La pantalla indica en mensaje-error que se debe corregir el campo \"nombre\", no aparece mensaje-exito y no se registra ningún empleado nuevo."
+    },
+    {
+      "id": "CP-14",
+      "escenario": "Puesto vacío",
+      "nivel": "api",
+      "precondiciones": [
+        "La API está disponible",
+        "No existe ningún empleado con correo \"elena.vega@empresa.com\"",
+        "Se anota el total de empleados devuelto por GET /api/empleados antes de la prueba"
+      ],
+      "pasos": [
+        "Enviar POST /api/empleados con cuerpo {\"nombre\": \"Elena Vega\", \"correo\": \"elena.vega@empresa.com\", \"puesto\": \"\", \"departamento\": \"Finanzas\", \"fecha_ingreso\": \"2024-04-01\"}",
+        "Verificar el código de respuesta y que el error hace referencia al campo puesto",
+        "Consultar GET /api/empleados y comparar el total con el anotado"
+      ],
+      "datos": {
+        "nombre": "Elena Vega",
+        "correo": "elena.vega@empresa.com",
+        "puesto": "",
+        "departamento": "Finanzas",
+        "fecha_ingreso": "2024-04-01",
+        "codigo_esperado": "422",
+        "campo_a_corregir": "puesto"
+      },
+      "resultado_esperado": "La respuesta tiene código 422, el error identifica el campo \"puesto\" y el total de empleados no cambia."
+    },
+    {
+      "id": "CP-15",
+      "escenario": "Puesto vacío",
+      "nivel": "e2e",
+      "precondiciones": [
+        "Frontend y backend levantados; la pantalla de registro de empleado está abierta",
+        "No existe ningún empleado con correo \"elena.vega@empresa.com\""
+      ],
+      "pasos": [
+        "Escribir \"Elena Vega\" en data-testid=\"empleado-nombre\"",
+        "Escribir \"elena.vega@empresa.com\" en data-testid=\"empleado-correo\"",
+        "Dejar vacío data-testid=\"empleado-puesto\"",
+        "Seleccionar \"Finanzas\" en data-testid=\"empleado-departamento\"",
+        "Escribir \"2024-04-01\" en data-testid=\"empleado-fecha-ingreso\"",
+        "Pulsar data-testid=\"empleado-guardar\"",
+        "Verificar que se muestra data-testid=\"mensaje-error\" y que su texto menciona el campo \"puesto\"",
+        "Verificar que no se muestra data-testid=\"mensaje-exito\""
+      ],
+      "datos": {
+        "nombre": "Elena Vega",
+        "correo": "elena.vega@empresa.com",
+        "puesto": "",
+        "departamento": "Finanzas",
+        "fecha_ingreso": "2024-04-01",
+        "campo_a_corregir": "puesto"
+      },
+      "resultado_esperado": "La pantalla indica en mensaje-error que se debe corregir el campo \"puesto\", no aparece mensaje-exito y no se registra ningún empleado nuevo."
+    },
+    {
+      "id": "CP-16",
+      "escenario": "Departamento que no está en la lista permitida",
+      "nivel": "api",
+      "precondiciones": [
+        "La API está disponible",
+        "GET /api/departamentos devuelve Tecnología, Ventas, Finanzas, Recursos Humanos y Operaciones (sin Marketing)",
+        "No existe ningún empleado con correo \"jorge.mora@empresa.com\"",
+        "Se anota el total de empleados devuelto por GET /api/empleados antes de la prueba"
+      ],
+      "pasos": [
+        "Enviar POST /api/empleados con cuerpo {\"nombre\": \"Jorge Mora\", \"correo\": \"jorge.mora@empresa.com\", \"puesto\": \"Diseñador\", \"departamento\": \"Marketing\", \"fecha_ingreso\": \"2024-04-01\"}",
+        "Verificar el código de respuesta y que el error hace referencia al campo departamento",
+        "Consultar GET /api/empleados y comparar el total con el anotado"
+      ],
+      "datos": {
+        "nombre": "Jorge Mora",
+        "correo": "jorge.mora@empresa.com",
+        "puesto": "Diseñador",
+        "departamento": "Marketing",
+        "fecha_ingreso": "2024-04-01",
+        "codigo_esperado": "422",
+        "campo_a_corregir": "departamento"
+      },
+      "resultado_esperado": "La respuesta tiene código 422, el error identifica el campo \"departamento\" y el total de empleados no cambia."
+    },
+    {
+      "id": "CP-17",
+      "escenario": "Departamento que no está en la lista permitida",
+      "nivel": "e2e",
+      "precondiciones": [
+        "Frontend y backend levantados; la pantalla de registro de empleado está abierta",
+        "No existe ningún empleado con correo \"jorge.mora@empresa.com\""
+      ],
+      "pasos": [
+        "Verificar que las opciones de data-testid=\"empleado-departamento\" son Tecnología, Ventas, Finanzas, Recursos Humanos y Operaciones, y que no incluye \"Marketing\"",
+        "Escribir \"Jorge Mora\" en data-testid=\"empleado-nombre\"",
+        "Escribir \"jorge.mora@empresa.com\" en data-testid=\"empleado-correo\"",
+        "Escribir \"Diseñador\" en data-testid=\"empleado-puesto\"",
+        "Forzar el valor \"Marketing\" en data-testid=\"empleado-departamento\" (por ejemplo inyectando la opción en el DOM o interceptando la petición)",
+        "Escribir \"2024-04-01\" en data-testid=\"empleado-fecha-ingreso\"",
+        "Pulsar data-testid=\"empleado-guardar\"",
+        "Verificar que se muestra data-testid=\"mensaje-error\" y que su texto menciona el campo \"departamento\"",
+        "Verificar que no se muestra data-testid=\"mensaje-exito\""
+      ],
+      "datos": {
+        "nombre": "Jorge Mora",
+        "correo": "jorge.mora@empresa.com",
+        "puesto": "Diseñador",
+        "departamento": "Marketing",
+        "fecha_ingreso": "2024-04-01",
+        "campo_a_corregir": "departamento"
+      },
+      "resultado_esperado": "El selector no ofrece \"Marketing\"; al forzarlo, la pantalla indica en mensaje-error que se debe corregir el campo \"departamento\", no aparece mensaje-exito y no se registra ningún empleado nuevo."
+    },
+    {
+      "id": "CP-18",
+      "escenario": "Fecha de ingreso sin informar",
+      "nivel": "api",
+      "precondiciones": [
+        "La API está disponible",
+        "No existe ningún empleado con correo \"sofia.rios@empresa.com\"",
+        "Se anota el total de empleados devuelto por GET /api/empleados antes de la prueba"
+      ],
+      "pasos": [
+        "Enviar POST /api/empleados con cuerpo {\"nombre\": \"Sofía Ríos\", \"correo\": \"sofia.rios@empresa.com\", \"puesto\": \"Operaria\", \"departamento\": \"Operaciones\"} sin el campo fecha_ingreso",
+        "Verificar el código de respuesta y que el error hace referencia al campo fecha_ingreso",
+        "Repetir el envío con \"fecha_ingreso\": \"\" y verificar el mismo resultado",
+        "Consultar GET /api/empleados y comparar el total con el anotado"
+      ],
+      "datos": {
+        "nombre": "Sofía Ríos",
+        "correo": "sofia.rios@empresa.com",
+        "puesto": "Operaria",
+        "departamento": "Operaciones",
+        "fecha_ingreso": "",
+        "codigo_esperado": "422",
+        "campo_a_corregir": "fecha_ingreso"
+      },
+      "resultado_esperado": "En ambos envíos la respuesta tiene código 422, el error identifica el campo \"fecha_ingreso\" y el total de empleados no cambia."
+    },
+    {
+      "id": "CP-19",
+      "escenario": "Fecha de ingreso sin informar",
+      "nivel": "e2e",
+      "precondiciones": [
+        "Frontend y backend levantados; la pantalla de registro de empleado está abierta",
+        "No existe ningún empleado con correo \"sofia.rios@empresa.com\""
+      ],
+      "pasos": [
+        "Escribir \"Sofía Ríos\" en data-testid=\"empleado-nombre\"",
+        "Escribir \"sofia.rios@empresa.com\" en data-testid=\"empleado-correo\"",
+        "Escribir \"Operaria\" en data-testid=\"empleado-puesto\"",
+        "Seleccionar \"Operaciones\" en data-testid=\"empleado-departamento\"",
+        "Dejar vacío data-testid=\"empleado-fecha-ingreso\"",
+        "Pulsar data-testid=\"empleado-guardar\"",
+        "Verificar que se muestra data-testid=\"mensaje-error\" y que su texto menciona el campo de fecha de ingreso (\"fecha_ingreso\")",
+        "Verificar que no se muestra data-testid=\"mensaje-exito\""
+      ],
+      "datos": {
+        "nombre": "Sofía Ríos",
+        "correo": "sofia.rios@empresa.com",
+        "puesto": "Operaria",
+        "departamento": "Operaciones",
+        "fecha_ingreso": "",
+        "campo_a_corregir": "fecha_ingreso"
+      },
+      "resultado_esperado": "La pantalla indica en mensaje-error que se debe corregir el campo \"fecha_ingreso\", no aparece mensaje-exito y no se registra ningún empleado nuevo."
+    }
+  ]
+}

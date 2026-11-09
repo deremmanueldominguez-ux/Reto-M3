@@ -1,0 +1,64 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(./.env)",
+      "Read(./**/.env)",
+      "WebFetch",
+      "WebSearch"
+    ],
+    "allow": [
+      "Bash(.venv/Scripts/python -m validadores.validar *)",
+      "Bash(.venv/Scripts/python -m validadores.preguntas *)",
+      "Bash(.venv/Scripts/python -m verificacion *)",
+      "Bash(.venv/Scripts/python -c *)",
+      "Bash(cd app/*)",
+      "Bash(ls *)",
+      "Bash(cat app/*)",
+      "Bash(mkdir app/*)",
+      "Bash(mkdir -p app/*)",
+      "Bash(npm *)",
+      "Bash(npx *)",
+      "Bash(node *)",
+      "Bash(cd app && docker *)",
+      "Bash(docker *)",
+      "Bash(curl *)",
+      "Bash(sleep *)",
+      "Bash(.venv/Scripts/python -m pytest *)",
+      "mcp__directorio__buscar_empleados",
+      "mcp__directorio__consultar_empleado"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Read|Glob|Grep|Write|Edit|MultiEdit|NotebookEdit|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR/.venv/Scripts/python\" \"$CLAUDE_PROJECT_DIR/hooks/rol.py\""
+          }
+        ]
+      },
+      {
+        "matcher": "Read|Glob|Grep|Write|Edit|MultiEdit|NotebookEdit|Bash|PowerShell",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR/.venv/Scripts/python\" \"$CLAUDE_PROJECT_DIR/hooks/seguridad.py\""
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "timeout": 900,
+            "command": "\"$CLAUDE_PROJECT_DIR/.venv/Scripts/python\" \"$CLAUDE_PROJECT_DIR/hooks/compuerta.py\""
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,6 @@
+node_modules
+dist
+datos
+__pycache__
+*.pyc
+.venv

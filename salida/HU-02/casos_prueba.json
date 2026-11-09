@@ -1,0 +1,452 @@
+{
+  "historia": "HU-02",
+  "casos": [
+    {
+      "id": "CP-01",
+      "escenario": "El directorio muestra los datos de cada empleado",
+      "nivel": "api",
+      "precondiciones": [
+        "El backend está disponible en el puerto 8000",
+        "Existe un único empleado con numero_empleado \"EMP-0001\" y estado \"activo\", registrado con POST /api/empleados sobre una base vacía con nombre \"Ana López\", correo \"ana.lopez@empresa.com\", puesto \"Analista de datos\", departamento \"Tecnología\" y fecha_ingreso \"2024-03-01\""
+      ],
+      "pasos": [
+        "Enviar GET /api/empleados sin parámetros",
+        "Verificar que el código de respuesta es 200",
+        "Verificar que la lista devuelta tiene exactamente 1 empleado",
+        "Verificar que el empleado trae numero_empleado \"EMP-0001\", nombre \"Ana López\", correo \"ana.lopez@empresa.com\", puesto \"Analista de datos\", departamento \"Tecnología\" y estado \"activo\""
+      ],
+      "datos": {
+        "numero_empleado": "EMP-0001",
+        "nombre": "Ana López",
+        "correo": "ana.lopez@empresa.com",
+        "puesto": "Analista de datos",
+        "departamento": "Tecnología",
+        "fecha_ingreso": "2024-03-01",
+        "estado_esperado": "activo",
+        "cantidad_empleados_esperada": "1",
+        "codigo_esperado": "200"
+      },
+      "resultado_esperado": "La API responde 200 con una lista de 1 empleado que trae número EMP-0001, nombre, correo, puesto, departamento y estado activo."
+    },
+    {
+      "id": "CP-02",
+      "escenario": "El directorio muestra los datos de cada empleado",
+      "nivel": "e2e",
+      "precondiciones": [
+        "El frontend y el backend están disponibles",
+        "Existe un único empleado con numero_empleado \"EMP-0001\" y estado \"activo\", registrado con POST /api/empleados sobre una base vacía con nombre \"Ana López\", correo \"ana.lopez@empresa.com\", puesto \"Analista de datos\", departamento \"Tecnología\" y fecha_ingreso \"2024-03-01\""
+      ],
+      "pasos": [
+        "Obtener el id del empleado \"EMP-0001\" con GET /api/empleados",
+        "Abrir la pantalla del directorio y esperar a que tabla-empleados esté visible",
+        "Verificar que dentro de tabla-empleados hay exactamente 1 elemento cuyo data-testid empieza por fila-empleado-, y que es fila-empleado-{id}",
+        "Verificar que numero-empleado-{id} muestra \"EMP-0001\"",
+        "Verificar que fila-empleado-{id} contiene \"Ana López\", \"Analista de datos\" y \"Tecnología\"",
+        "Verificar que estado-empleado-{id} muestra \"Activo\""
+      ],
+      "datos": {
+        "numero_empleado": "EMP-0001",
+        "nombre": "Ana López",
+        "correo": "ana.lopez@empresa.com",
+        "puesto": "Analista de datos",
+        "departamento": "Tecnología",
+        "fecha_ingreso": "2024-03-01",
+        "estado_en_pantalla_esperado": "Activo",
+        "cantidad_filas_esperada": "1"
+      },
+      "resultado_esperado": "El directorio muestra 1 fila con número EMP-0001, nombre Ana López, puesto Analista de datos, departamento Tecnología y estado Activo."
+    },
+    {
+      "id": "CP-03",
+      "escenario": "Búsqueda de un empleado por nombre",
+      "nivel": "api",
+      "precondiciones": [
+        "El backend está disponible en el puerto 8000",
+        "Sobre una base vacía se registró con POST /api/empleados el empleado \"EMP-0001\" con nombre \"Ana López\", correo \"ana.lopez@empresa.com\", puesto \"Analista de datos\", departamento \"Tecnología\" y fecha_ingreso \"2024-03-01\"",
+        "Después se registró con POST /api/empleados el empleado \"EMP-0002\" con nombre \"Luis Pérez\", correo \"luis.perez@empresa.com\", puesto \"Vendedor\", departamento \"Ventas\" y fecha_ingreso \"2024-05-15\"",
+        "Supuesto por pregunta abierta de los criterios: la búsqueda se hace con GET /api/empleados y el parámetro de consulta busqueda"
+      ],
+      "pasos": [
+        "Enviar GET /api/empleados con el parámetro busqueda igual a \"Ana López\"",
+        "Verificar que el código de respuesta es 200",
+        "Verificar que la lista devuelta tiene exactamente 1 empleado",
+        "Verificar que el empleado devuelto tiene numero_empleado \"EMP-0001\"",
+        "Verificar que ningún empleado devuelto tiene numero_empleado \"EMP-0002\""
+      ],
+      "datos": {
+        "busqueda": "Ana López",
+        "numero_empleado_esperado": "EMP-0001",
+        "numero_empleado_excluido": "EMP-0002",
+        "cantidad_empleados_esperada": "1",
+        "codigo_esperado": "200"
+      },
+      "resultado_esperado": "La API responde 200 con una lista que contiene solo al empleado EMP-0001."
+    },
+    {
+      "id": "CP-04",
+      "escenario": "Búsqueda de un empleado por nombre",
+      "nivel": "e2e",
+      "precondiciones": [
+        "El frontend y el backend están disponibles",
+        "Sobre una base vacía se registró con POST /api/empleados el empleado \"EMP-0001\" con nombre \"Ana López\", correo \"ana.lopez@empresa.com\", puesto \"Analista de datos\", departamento \"Tecnología\" y fecha_ingreso \"2024-03-01\"",
+        "Después se registró con POST /api/empleados el empleado \"EMP-0002\" con nombre \"Luis Pérez\", correo \"luis.perez@empresa.com\", puesto \"Vendedor\", departamento \"Ventas\" y fecha_ingreso \"2024-05-15\"",
+        "Supuesto por pregunta abierta de los criterios: la búsqueda se ejecuta al escribir o al pulsar Enter en el campo, porque las convenciones no definen un botón de buscar"
+      ],
+      "pasos": [
+        "Obtener los id de \"EMP-0001\" (id1) y \"EMP-0002\" (id2) con GET /api/empleados",
+        "Abrir la pantalla del directorio y esperar a que tabla-empleados muestre fila-empleado-{id1} y fila-empleado-{id2}",
+        "Escribir \"Ana López\" en buscar-empleados y pulsar Enter",
+        "Esperar a que fila-empleado-{id2} desaparezca de tabla-empleados",
+        "Verificar que dentro de tabla-empleados hay exactamente 1 elemento cuyo data-testid empieza por fila-empleado-",
+        "Verificar que numero-empleado-{id1} muestra \"EMP-0001\""
+      ],
+      "datos": {
+        "busqueda": "Ana López",
+        "numero_empleado_esperado": "EMP-0001",
+        "numero_empleado_excluido": "EMP-0002",
+        "cantidad_filas_esperada": "1"
+      },
+      "resultado_esperado": "El directorio muestra 1 fila, la del empleado EMP-0001, y no muestra al empleado EMP-0002."
+    },
+    {
+      "id": "CP-05",
+      "escenario": "Búsqueda de un empleado por correo",
+      "nivel": "api",
+      "precondiciones": [
+        "El backend está disponible en el puerto 8000",
+        "Sobre una base vacía se registró con POST /api/empleados el empleado \"EMP-0001\" con nombre \"Ana López\", correo \"ana.lopez@empresa.com\", puesto \"Analista de datos\", departamento \"Tecnología\" y fecha_ingreso \"2024-03-01\"",
+        "Después se registró con POST /api/empleados el empleado \"EMP-0002\" con nombre \"Luis Pérez\", correo \"luis.perez@empresa.com\", puesto \"Vendedor\", departamento \"Ventas\" y fecha_ingreso \"2024-05-15\"",
+        "Supuesto por pregunta abierta de los criterios: la búsqueda se hace con GET /api/empleados y el parámetro de consulta busqueda"
+      ],
+      "pasos": [
+        "Enviar GET /api/empleados con el parámetro busqueda igual a \"luis.perez@empresa.com\"",
+        "Verificar que el código de respuesta es 200",
+        "Verificar que la lista devuelta tiene exactamente 1 empleado",
+        "Verificar que el empleado devuelto tiene numero_empleado \"EMP-0002\"",
+        "Verificar que ningún empleado devuelto tiene numero_empleado \"EMP-0001\""
+      ],
+      "datos": {
+        "busqueda": "luis.perez@empresa.com",
+        "numero_empleado_esperado": "EMP-0002",
+        "numero_empleado_excluido": "EMP-0001",
+        "cantidad_empleados_esperada": "1",
+        "codigo_esperado": "200"
+      },
+      "resultado_esperado": "La API responde 200 con una lista que contiene solo al empleado EMP-0002."
+    },
+    {
+      "id": "CP-06",
+      "escenario": "Búsqueda de un empleado por correo",
+      "nivel": "e2e",
+      "precondiciones": [
+        "El frontend y el backend están disponibles",
+        "Sobre una base vacía se registró con POST /api/empleados el empleado \"EMP-0001\" con nombre \"Ana López\", correo \"ana.lopez@empresa.com\", puesto \"Analista de datos\", departamento \"Tecnología\" y fecha_ingreso \"2024-03-01\"",
+        "Después se registró con POST /api/empleados el empleado \"EMP-0002\" con nombre \"Luis Pérez\", correo \"luis.perez@empresa.com\", puesto \"Vendedor\", departamento \"Ventas\" y fecha_ingreso \"2024-05-15\"",
+        "Supuesto por pregunta abierta de los criterios: la búsqueda se ejecuta al escribir o al pulsar Enter en el campo, porque las convenciones no definen un botón de buscar"
+      ],
+      "pasos": [
+        "Obtener los id de \"EMP-0001\" (id1) y \"EMP-0002\" (id2) con GET /api/empleados",
+        "Abrir la pantalla del directorio y esperar a que tabla-empleados muestre fila-empleado-{id1} y fila-empleado-{id2}",
+        "Escribir \"luis.perez@empresa.com\" en buscar-empleados y pulsar Enter",
+        "Esperar a que fila-empleado-{id1} desaparezca de tabla-empleados",
+        "Verificar que dentro de tabla-empleados hay exactamente 1 elemento cuyo data-testid empieza por fila-empleado-",
+        "Verificar que numero-empleado-{id2} muestra \"EMP-0002\""
+      ],
+      "datos": {
+        "busqueda": "luis.perez@empresa.com",
+        "numero_empleado_esperado": "EMP-0002",
+        "numero_empleado_excluido": "EMP-0001",
+        "cantidad_filas_esperada": "1"
+      },
+      "resultado_esperado": "El directorio muestra 1 fila, la del empleado EMP-0002, y no muestra al empleado EMP-0001."
+    },
+    {
+      "id": "CP-07",
+      "escenario": "La búsqueda por nombre no distingue mayúsculas de minúsculas",
+      "nivel": "api",
+      "precondiciones": [
+        "El backend está disponible en el puerto 8000",
+        "Sobre una base vacía se registró con POST /api/empleados el empleado \"EMP-0001\" con nombre \"Ana López\", correo \"ana.lopez@empresa.com\", puesto \"Analista de datos\", departamento \"Tecnología\" y fecha_ingreso \"2024-03-01\"",
+        "Después se registró con POST /api/empleados el empleado \"EMP-0002\" con nombre \"Luis Pérez\", correo \"luis.perez@empresa.com\", puesto \"Vendedor\", departamento \"Ventas\" y fecha_ingreso \"2024-05-15\"",
+        "Supuesto por pregunta abierta de los criterios: la búsqueda se hace con GET /api/empleados y el parámetro de consulta busqueda"
+      ],
+      "pasos": [
+        "Enviar GET /api/empleados con el parámetro busqueda igual a \"ANA LÓPEZ\", con la Ó mayúscula acentuada",
+        "Verificar que el código de respuesta es 200",
+        "Verificar que la lista devuelta tiene exactamente 1 empleado",
+        "Verificar que el empleado devuelto tiene numero_empleado \"EMP-0001\" y nombre \"Ana López\""
+      ],
+      "datos": {
+        "busqueda": "ANA LÓPEZ",
+        "numero_empleado_esperado": "EMP-0001",
+        "nombre_esperado": "Ana López",
+        "cantidad_empleados_esperada": "1",
+        "codigo_esperado": "200"
+      },
+      "resultado_esperado": "La API responde 200 con una lista que contiene solo al empleado EMP-0001, aunque el texto buscado esté en mayúsculas e incluya la Ó acentuada."
+    },
+    {
+      "id": "CP-08",
+      "escenario": "La búsqueda por nombre no distingue mayúsculas de minúsculas",
+      "nivel": "e2e",
+      "precondiciones": [
+        "El frontend y el backend están disponibles",
+        "Sobre una base vacía se registró con POST /api/empleados el empleado \"EMP-0001\" con nombre \"Ana López\", correo \"ana.lopez@empresa.com\", puesto \"Analista de datos\", departamento \"Tecnología\" y fecha_ingreso \"2024-03-01\"",
+        "Después se registró con POST /api/empleados el empleado \"EMP-0002\" con nombre \"Luis Pérez\", correo \"luis.perez@empresa.com\", puesto \"Vendedor\", departamento \"Ventas\" y fecha_ingreso \"2024-05-15\"",
+        "Supuesto por pregunta abierta de los criterios: la búsqueda se ejecuta al escribir o al pulsar Enter en el campo, porque las convenciones no definen un botón de buscar"
+      ],
+      "pasos": [
+        "Obtener los id de \"EMP-0001\" (id1) y \"EMP-0002\" (id2) con GET /api/empleados",
+        "Abrir la pantalla del directorio y esperar a que tabla-empleados muestre fila-empleado-{id1} y fila-empleado-{id2}",
+        "Escribir \"ANA LÓPEZ\" en buscar-empleados y pulsar Enter",
+        "Esperar a que fila-empleado-{id2} desaparezca de tabla-empleados",
+        "Verificar que dentro de tabla-empleados hay exactamente 1 elemento cuyo data-testid empieza por fila-empleado-",
+        "Verificar que numero-empleado-{id1} muestra \"EMP-0001\""
+      ],
+      "datos": {
+        "busqueda": "ANA LÓPEZ",
+        "numero_empleado_esperado": "EMP-0001",
+        "cantidad_filas_esperada": "1"
+      },
+      "resultado_esperado": "El directorio muestra 1 fila, la del empleado EMP-0001, aunque el texto buscado esté en mayúsculas."
+    },
+    {
+      "id": "CP-09",
+      "escenario": "La búsqueda por correo no distingue mayúsculas de minúsculas",
+      "nivel": "api",
+      "precondiciones": [
+        "El backend está disponible en el puerto 8000",
+        "Sobre una base vacía se registró con POST /api/empleados el empleado \"EMP-0001\" con nombre \"Ana López\", correo \"ana.lopez@empresa.com\", puesto \"Analista de datos\", departamento \"Tecnología\" y fecha_ingreso \"2024-03-01\"",
+        "Después se registró con POST /api/empleados el empleado \"EMP-0002\" con nombre \"Luis Pérez\", correo \"luis.perez@empresa.com\", puesto \"Vendedor\", departamento \"Ventas\" y fecha_ingreso \"2024-05-15\"",
+        "Supuesto por pregunta abierta de los criterios: la búsqueda se hace con GET /api/empleados y el parámetro de consulta busqueda"
+      ],
+      "pasos": [
+        "Enviar GET /api/empleados con el parámetro busqueda igual a \"LUIS.PEREZ@EMPRESA.COM\"",
+        "Verificar que el código de respuesta es 200",
+        "Verificar que la lista devuelta tiene exactamente 1 empleado",
+        "Verificar que el empleado devuelto tiene numero_empleado \"EMP-0002\" y correo \"luis.perez@empresa.com\""
+      ],
+      "datos": {
+        "busqueda": "LUIS.PEREZ@EMPRESA.COM",
+        "numero_empleado_esperado": "EMP-0002",
+        "correo_esperado": "luis.perez@empresa.com",
+        "cantidad_empleados_esperada": "1",
+        "codigo_esperado": "200"
+      },
+      "resultado_esperado": "La API responde 200 con una lista que contiene solo al empleado EMP-0002, aunque el correo buscado esté en mayúsculas."
+    },
+    {
+      "id": "CP-10",
+      "escenario": "La búsqueda por correo no distingue mayúsculas de minúsculas",
+      "nivel": "e2e",
+      "precondiciones": [
+        "El frontend y el backend están disponibles",
+        "Sobre una base vacía se registró con POST /api/empleados el empleado \"EMP-0001\" con nombre \"Ana López\", correo \"ana.lopez@empresa.com\", puesto \"Analista de datos\", departamento \"Tecnología\" y fecha_ingreso \"2024-03-01\"",
+        "Después se registró con POST /api/empleados el empleado \"EMP-0002\" con nombre \"Luis Pérez\", correo \"luis.perez@empresa.com\", puesto \"Vendedor\", departamento \"Ventas\" y fecha_ingreso \"2024-05-15\"",
+        "Supuesto por pregunta abierta de los criterios: la búsqueda se ejecuta al escribir o al pulsar Enter en el campo, porque las convenciones no definen un botón de buscar"
+      ],
+      "pasos": [
+        "Obtener los id de \"EMP-0001\" (id1) y \"EMP-0002\" (id2) con GET /api/empleados",
+        "Abrir la pantalla del directorio y esperar a que tabla-empleados muestre fila-empleado-{id1} y fila-empleado-{id2}",
+        "Escribir \"LUIS.PEREZ@EMPRESA.COM\" en buscar-empleados y pulsar Enter",
+        "Esperar a que fila-empleado-{id1} desaparezca de tabla-empleados",
+        "Verificar que dentro de tabla-empleados hay exactamente 1 elemento cuyo data-testid empieza por fila-empleado-",
+        "Verificar que numero-empleado-{id2} muestra \"EMP-0002\""
+      ],
+      "datos": {
+        "busqueda": "LUIS.PEREZ@EMPRESA.COM",
+        "numero_empleado_esperado": "EMP-0002",
+        "cantidad_filas_esperada": "1"
+      },
+      "resultado_esperado": "El directorio muestra 1 fila, la del empleado EMP-0002, aunque el correo buscado esté en mayúsculas."
+    },
+    {
+      "id": "CP-11",
+      "escenario": "Filtrar el directorio por departamento",
+      "nivel": "api",
+      "precondiciones": [
+        "El backend está disponible en el puerto 8000",
+        "Sobre una base vacía se registró con POST /api/empleados el empleado \"EMP-0001\" con nombre \"Ana López\", correo \"ana.lopez@empresa.com\", puesto \"Analista de datos\", departamento \"Tecnología\" y fecha_ingreso \"2024-03-01\"",
+        "Después se registró con POST /api/empleados el empleado \"EMP-0002\" con nombre \"Luis Pérez\", correo \"luis.perez@empresa.com\", puesto \"Vendedor\", departamento \"Ventas\" y fecha_ingreso \"2024-05-15\"",
+        "Supuesto por pregunta abierta de los criterios: el filtro se hace con GET /api/empleados y el parámetro de consulta departamento"
+      ],
+      "pasos": [
+        "Enviar GET /api/empleados con el parámetro departamento igual a \"Ventas\"",
+        "Verificar que el código de respuesta es 200",
+        "Verificar que la lista devuelta tiene exactamente 1 empleado",
+        "Verificar que el empleado devuelto tiene numero_empleado \"EMP-0002\" y departamento \"Ventas\"",
+        "Verificar que ningún empleado devuelto tiene numero_empleado \"EMP-0001\""
+      ],
+      "datos": {
+        "departamento": "Ventas",
+        "numero_empleado_esperado": "EMP-0002",
+        "numero_empleado_excluido": "EMP-0001",
+        "cantidad_empleados_esperada": "1",
+        "codigo_esperado": "200"
+      },
+      "resultado_esperado": "La API responde 200 con una lista que contiene solo al empleado EMP-0002, del departamento Ventas."
+    },
+    {
+      "id": "CP-12",
+      "escenario": "Filtrar el directorio por departamento",
+      "nivel": "e2e",
+      "precondiciones": [
+        "El frontend y el backend están disponibles",
+        "Sobre una base vacía se registró con POST /api/empleados el empleado \"EMP-0001\" con nombre \"Ana López\", correo \"ana.lopez@empresa.com\", puesto \"Analista de datos\", departamento \"Tecnología\" y fecha_ingreso \"2024-03-01\"",
+        "Después se registró con POST /api/empleados el empleado \"EMP-0002\" con nombre \"Luis Pérez\", correo \"luis.perez@empresa.com\", puesto \"Vendedor\", departamento \"Ventas\" y fecha_ingreso \"2024-05-15\""
+      ],
+      "pasos": [
+        "Obtener los id de \"EMP-0001\" (id1) y \"EMP-0002\" (id2) con GET /api/empleados",
+        "Abrir la pantalla del directorio y esperar a que tabla-empleados muestre fila-empleado-{id1} y fila-empleado-{id2}",
+        "Seleccionar \"Ventas\" en filtro-departamento",
+        "Esperar a que fila-empleado-{id1} desaparezca de tabla-empleados",
+        "Verificar que dentro de tabla-empleados hay exactamente 1 elemento cuyo data-testid empieza por fila-empleado-",
+        "Verificar que numero-empleado-{id2} muestra \"EMP-0002\" y que fila-empleado-{id2} contiene \"Ventas\""
+      ],
+      "datos": {
+        "departamento": "Ventas",
+        "numero_empleado_esperado": "EMP-0002",
+        "numero_empleado_excluido": "EMP-0001",
+        "cantidad_filas_esperada": "1"
+      },
+      "resultado_esperado": "El directorio muestra 1 fila, la del empleado EMP-0002 del departamento Ventas, y no muestra al empleado EMP-0001."
+    },
+    {
+      "id": "CP-13",
+      "escenario": "Un empleado dado de baja sigue apareciendo en el directorio",
+      "nivel": "api",
+      "precondiciones": [
+        "El backend está disponible en el puerto 8000",
+        "Existe un único empleado con numero_empleado \"EMP-0001\" y estado \"activo\", registrado con POST /api/empleados sobre una base vacía con nombre \"Ana López\", correo \"ana.lopez@empresa.com\", puesto \"Analista de datos\", departamento \"Tecnología\" y fecha_ingreso \"2024-03-01\"",
+        "El empleado se dio de baja con POST /api/empleados/{id}/baja y fecha_baja \"2024-09-30\", la ruta implementada en HU-03"
+      ],
+      "pasos": [
+        "Enviar GET /api/empleados sin parámetros",
+        "Verificar que el código de respuesta es 200",
+        "Verificar que la lista devuelta tiene exactamente 1 empleado",
+        "Verificar que el empleado trae numero_empleado \"EMP-0001\", estado \"baja\" y fecha_baja \"2024-09-30\""
+      ],
+      "datos": {
+        "numero_empleado": "EMP-0001",
+        "fecha_ingreso": "2024-03-01",
+        "fecha_baja": "2024-09-30",
+        "estado_esperado": "baja",
+        "cantidad_empleados_esperada": "1",
+        "codigo_esperado": "200"
+      },
+      "resultado_esperado": "La API responde 200 y la lista sigue incluyendo al empleado EMP-0001, ahora con estado baja y fecha de baja 2024-09-30."
+    },
+    {
+      "id": "CP-14",
+      "escenario": "Un empleado dado de baja sigue apareciendo en el directorio",
+      "nivel": "e2e",
+      "precondiciones": [
+        "El frontend y el backend están disponibles",
+        "Existe un único empleado con numero_empleado \"EMP-0001\" y estado \"activo\", registrado con POST /api/empleados sobre una base vacía con nombre \"Ana López\", correo \"ana.lopez@empresa.com\", puesto \"Analista de datos\", departamento \"Tecnología\" y fecha_ingreso \"2024-03-01\"",
+        "El empleado se dio de baja con POST /api/empleados/{id}/baja y fecha_baja \"2024-09-30\", la ruta implementada en HU-03"
+      ],
+      "pasos": [
+        "Obtener el id del empleado \"EMP-0001\" con GET /api/empleados",
+        "Abrir la pantalla del directorio y esperar a que tabla-empleados muestre fila-empleado-{id}",
+        "Verificar que dentro de tabla-empleados hay exactamente 1 elemento cuyo data-testid empieza por fila-empleado-",
+        "Verificar que numero-empleado-{id} muestra \"EMP-0001\"",
+        "Verificar que estado-empleado-{id} muestra \"Baja\""
+      ],
+      "datos": {
+        "numero_empleado": "EMP-0001",
+        "fecha_ingreso": "2024-03-01",
+        "fecha_baja": "2024-09-30",
+        "estado_en_pantalla_esperado": "Baja",
+        "cantidad_filas_esperada": "1"
+      },
+      "resultado_esperado": "El directorio sigue mostrando 1 fila con el empleado EMP-0001 y estado Baja."
+    },
+    {
+      "id": "CP-15",
+      "escenario": "Mensaje cuando la búsqueda no tiene resultados",
+      "nivel": "api",
+      "precondiciones": [
+        "El backend está disponible en el puerto 8000",
+        "Existe un único empleado con numero_empleado \"EMP-0001\", registrado con POST /api/empleados sobre una base vacía con nombre \"Ana López\", correo \"ana.lopez@empresa.com\", puesto \"Analista de datos\", departamento \"Tecnología\" y fecha_ingreso \"2024-03-01\"",
+        "Supuesto por pregunta abierta de los criterios: la búsqueda se hace con GET /api/empleados y el parámetro de consulta busqueda"
+      ],
+      "pasos": [
+        "Enviar GET /api/empleados con el parámetro busqueda igual a \"Zacarías Ortega\"",
+        "Verificar que el código de respuesta es 200",
+        "Verificar que la respuesta es una lista vacía"
+      ],
+      "datos": {
+        "busqueda": "Zacarías Ortega",
+        "cantidad_empleados_esperada": "0",
+        "codigo_esperado": "200"
+      },
+      "resultado_esperado": "La API responde 200 con una lista vacía; el mensaje en pantalla se comprueba en el caso e2e."
+    },
+    {
+      "id": "CP-16",
+      "escenario": "Mensaje cuando la búsqueda no tiene resultados",
+      "nivel": "e2e",
+      "precondiciones": [
+        "El frontend y el backend están disponibles",
+        "Existe un único empleado con numero_empleado \"EMP-0001\", registrado con POST /api/empleados sobre una base vacía con nombre \"Ana López\", correo \"ana.lopez@empresa.com\", puesto \"Analista de datos\", departamento \"Tecnología\" y fecha_ingreso \"2024-03-01\"",
+        "Supuesto por pregunta abierta de los criterios: la búsqueda se ejecuta al escribir o al pulsar Enter en el campo, porque las convenciones no definen un botón de buscar"
+      ],
+      "pasos": [
+        "Obtener el id del empleado \"EMP-0001\" con GET /api/empleados",
+        "Abrir la pantalla del directorio y esperar a que tabla-empleados muestre fila-empleado-{id}",
+        "Escribir \"Zacarías Ortega\" en buscar-empleados y pulsar Enter",
+        "Esperar a que sin-resultados esté visible",
+        "Verificar que sin-resultados tiene texto no vacío, sin comprobar el texto exacto porque sigue sin definir en las preguntas abiertas",
+        "Verificar que en la página no hay ningún elemento cuyo data-testid empieza por fila-empleado-, sin exigir que tabla-empleados siga visible"
+      ],
+      "datos": {
+        "busqueda": "Zacarías Ortega",
+        "cantidad_filas_esperada": "0"
+      },
+      "resultado_esperado": "El directorio no muestra filas y sin-resultados muestra un mensaje que indica que no hay resultados."
+    },
+    {
+      "id": "CP-17",
+      "escenario": "Mensaje cuando el filtro por departamento no tiene resultados",
+      "nivel": "api",
+      "precondiciones": [
+        "El backend está disponible en el puerto 8000",
+        "Existe un único empleado con numero_empleado \"EMP-0001\", registrado con POST /api/empleados sobre una base vacía con nombre \"Ana López\", correo \"ana.lopez@empresa.com\", puesto \"Analista de datos\", departamento \"Tecnología\" y fecha_ingreso \"2024-03-01\"",
+        "Supuesto por pregunta abierta de los criterios: el filtro se hace con GET /api/empleados y el parámetro de consulta departamento"
+      ],
+      "pasos": [
+        "Enviar GET /api/empleados con el parámetro departamento igual a \"Finanzas\"",
+        "Verificar que el código de respuesta es 200",
+        "Verificar que la respuesta es una lista vacía"
+      ],
+      "datos": {
+        "departamento": "Finanzas",
+        "cantidad_empleados_esperada": "0",
+        "codigo_esperado": "200"
+      },
+      "resultado_esperado": "La API responde 200 con una lista vacía; el mensaje en pantalla se comprueba en el caso e2e."
+    },
+    {
+      "id": "CP-18",
+      "escenario": "Mensaje cuando el filtro por departamento no tiene resultados",
+      "nivel": "e2e",
+      "precondiciones": [
+        "El frontend y el backend están disponibles",
+        "Existe un único empleado con numero_empleado \"EMP-0001\", registrado con POST /api/empleados sobre una base vacía con nombre \"Ana López\", correo \"ana.lopez@empresa.com\", puesto \"Analista de datos\", departamento \"Tecnología\" y fecha_ingreso \"2024-03-01\""
+      ],
+      "pasos": [
+        "Obtener el id del empleado \"EMP-0001\" con GET /api/empleados",
+        "Abrir la pantalla del directorio y esperar a que tabla-empleados muestre fila-empleado-{id}",
+        "Seleccionar \"Finanzas\" en filtro-departamento",
+        "Esperar a que sin-resultados esté visible",
+        "Verificar que sin-resultados tiene texto no vacío, sin comprobar el texto exacto porque sigue sin definir en las preguntas abiertas",
+        "Verificar que en la página no hay ningún elemento cuyo data-testid empieza por fila-empleado-, sin exigir que tabla-empleados siga visible"
+      ],
+      "datos": {
+        "departamento": "Finanzas",
+        "cantidad_filas_esperada": "0"
+      },
+      "resultado_esperado": "El directorio no muestra filas y sin-resultados muestra un mensaje que indica que no hay resultados."
+    }
+  ]
+}

@@ -1,0 +1,157 @@
+{
+  "historia": "HU-05",
+  "casos": [
+    {
+      "id": "CP-01",
+      "escenario": "Ver la antigüedad en años y meses de cada empleado",
+      "nivel": "api",
+      "precondiciones": [
+        "La API responde en GET /api/salud con {\"estado\": \"ok\"}",
+        "La fecha actual del sistema es 2026-11-08",
+        "Existe el empleado EMP-0001 'Ana Pérez' (ana.perez@empresa.com) con fecha_ingreso 2024-05-08 y estado Activo",
+        "Existe el empleado EMP-0002 'Luis Gómez' (luis.gomez@empresa.com) con fecha_ingreso 2021-11-08 y estado Activo"
+      ],
+      "pasos": [
+        "Enviar GET /api/empleados",
+        "Verificar que el código de respuesta es 200",
+        "Localizar en la respuesta el empleado con numero_empleado EMP-0001 y leer su antigüedad",
+        "Localizar en la respuesta el empleado con numero_empleado EMP-0002 y leer su antigüedad"
+      ],
+      "datos": {
+        "fecha_hoy": "2026-11-08",
+        "numero_empleado_1": "EMP-0001",
+        "nombre_1": "Ana Pérez",
+        "correo_1": "ana.perez@empresa.com",
+        "fecha_ingreso_1": "2024-05-08",
+        "antiguedad_esperada_1": "2 años 6 meses",
+        "numero_empleado_2": "EMP-0002",
+        "nombre_2": "Luis Gómez",
+        "correo_2": "luis.gomez@empresa.com",
+        "fecha_ingreso_2": "2021-11-08",
+        "antiguedad_esperada_2": "5 años 0 meses",
+        "codigo_esperado": "200"
+      },
+      "resultado_esperado": "La respuesta es 200; EMP-0001 muestra una antigüedad de '2 años 6 meses' y EMP-0002 muestra '5 años 0 meses'."
+    },
+    {
+      "id": "CP-02",
+      "escenario": "Ver la antigüedad en años y meses de cada empleado",
+      "nivel": "e2e",
+      "precondiciones": [
+        "El frontend está disponible y llama a la API con rutas relativas /api",
+        "La fecha actual del sistema es 2026-11-08",
+        "Existen EMP-0001 'Ana Pérez' con fecha_ingreso 2024-05-08 y EMP-0002 'Luis Gómez' con fecha_ingreso 2021-11-08"
+      ],
+      "pasos": [
+        "Abrir la pantalla del directorio",
+        "Esperar a que sea visible el elemento data-testid='tabla-empleados'",
+        "Localizar la fila data-testid='fila-empleado-{id}' cuyo data-testid='numero-empleado-{id}' contiene 'EMP-0001'",
+        "Leer el texto de antigüedad de esa fila en data-testid='antiguedad-empleado-{id}'",
+        "Localizar la fila data-testid='fila-empleado-{id}' cuyo data-testid='numero-empleado-{id}' contiene 'EMP-0002'",
+        "Leer el texto de antigüedad de esa fila en data-testid='antiguedad-empleado-{id}'"
+      ],
+      "datos": {
+        "fecha_hoy": "2026-11-08",
+        "numero_empleado_1": "EMP-0001",
+        "antiguedad_esperada_1": "2 años 6 meses",
+        "numero_empleado_2": "EMP-0002",
+        "antiguedad_esperada_2": "5 años 0 meses"
+      },
+      "resultado_esperado": "En la tabla de empleados, la fila de EMP-0001 muestra '2 años 6 meses' y la fila de EMP-0002 muestra '5 años 0 meses'."
+    },
+    {
+      "id": "CP-03",
+      "escenario": "Empleado que ingresó hoy tiene antigüedad cero",
+      "nivel": "api",
+      "precondiciones": [
+        "La API responde en GET /api/salud con {\"estado\": \"ok\"}",
+        "La fecha actual del sistema es 2026-11-08",
+        "Existe el empleado EMP-0003 'Marta Ruiz' (marta.ruiz@empresa.com) con fecha_ingreso 2026-11-08 y estado Activo"
+      ],
+      "pasos": [
+        "Enviar GET /api/empleados",
+        "Verificar que el código de respuesta es 200",
+        "Localizar en la respuesta el empleado con numero_empleado EMP-0003 y leer su antigüedad"
+      ],
+      "datos": {
+        "fecha_hoy": "2026-11-08",
+        "numero_empleado": "EMP-0003",
+        "nombre": "Marta Ruiz",
+        "correo": "marta.ruiz@empresa.com",
+        "fecha_ingreso": "2026-11-08",
+        "antiguedad_esperada": "0 años 0 meses",
+        "codigo_esperado": "200"
+      },
+      "resultado_esperado": "La respuesta es 200 y EMP-0003 muestra una antigüedad de '0 años 0 meses'."
+    },
+    {
+      "id": "CP-04",
+      "escenario": "Empleado que ingresó hoy tiene antigüedad cero",
+      "nivel": "e2e",
+      "precondiciones": [
+        "El frontend está disponible",
+        "La fecha actual del sistema es 2026-11-08",
+        "Existe EMP-0003 'Marta Ruiz' con fecha_ingreso 2026-11-08"
+      ],
+      "pasos": [
+        "Abrir la pantalla del directorio",
+        "Esperar a que sea visible el elemento data-testid='tabla-empleados'",
+        "Localizar la fila data-testid='fila-empleado-{id}' cuyo data-testid='numero-empleado-{id}' contiene 'EMP-0003'",
+        "Leer el texto de antigüedad de esa fila en data-testid='antiguedad-empleado-{id}'"
+      ],
+      "datos": {
+        "fecha_hoy": "2026-11-08",
+        "numero_empleado": "EMP-0003",
+        "antiguedad_esperada": "0 años 0 meses"
+      },
+      "resultado_esperado": "La fila de EMP-0003 muestra '0 años 0 meses'."
+    },
+    {
+      "id": "CP-05",
+      "escenario": "Antigüedad de un empleado que cumple aniversario este mes",
+      "nivel": "api",
+      "precondiciones": [
+        "La API responde en GET /api/salud con {\"estado\": \"ok\"}",
+        "La fecha actual del sistema es 2026-11-08",
+        "Existe el empleado EMP-0004 'Carlos Díaz' (carlos.diaz@empresa.com) con fecha_ingreso 2016-11-08 y estado Activo"
+      ],
+      "pasos": [
+        "Enviar GET /api/empleados",
+        "Verificar que el código de respuesta es 200",
+        "Localizar en la respuesta el empleado con numero_empleado EMP-0004 y leer su antigüedad"
+      ],
+      "datos": {
+        "fecha_hoy": "2026-11-08",
+        "numero_empleado": "EMP-0004",
+        "nombre": "Carlos Díaz",
+        "correo": "carlos.diaz@empresa.com",
+        "fecha_ingreso": "2016-11-08",
+        "antiguedad_esperada": "10 años 0 meses",
+        "codigo_esperado": "200"
+      },
+      "resultado_esperado": "La respuesta es 200 y EMP-0004 muestra una antigüedad de '10 años 0 meses'."
+    },
+    {
+      "id": "CP-06",
+      "escenario": "Antigüedad de un empleado que cumple aniversario este mes",
+      "nivel": "e2e",
+      "precondiciones": [
+        "El frontend está disponible",
+        "La fecha actual del sistema es 2026-11-08",
+        "Existe EMP-0004 'Carlos Díaz' con fecha_ingreso 2016-11-08"
+      ],
+      "pasos": [
+        "Abrir la pantalla del directorio",
+        "Esperar a que sea visible el elemento data-testid='tabla-empleados'",
+        "Localizar la fila data-testid='fila-empleado-{id}' cuyo data-testid='numero-empleado-{id}' contiene 'EMP-0004'",
+        "Leer el texto de antigüedad de esa fila en data-testid='antiguedad-empleado-{id}'"
+      ],
+      "datos": {
+        "fecha_hoy": "2026-11-08",
+        "numero_empleado": "EMP-0004",
+        "antiguedad_esperada": "10 años 0 meses"
+      },
+      "resultado_esperado": "La fila de EMP-0004 muestra '10 años 0 meses'."
+    }
+  ]
+}

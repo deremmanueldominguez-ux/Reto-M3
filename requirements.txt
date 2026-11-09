@@ -1,0 +1,12 @@
+pydantic
+# Sesión 2: verificar la app que escribe el desarrollador (backend y llamadas HTTP)
+httpx
+fastapi
+uvicorn
+sqlalchemy
+email-validator
+# ejemplos/s2_flujos/evaluador.py usa pytest como juez
+pytest
+# Sesión 3: pruebas E2E que escribe el agente 5 y el servidor MCP de los ejemplos
+pytest-playwright
+mcp<2

@@ -1,0 +1,14 @@
+﻿.venv/
+__pycache__/
+*.pyc
+.env
+.DS_Store
+salida/.compuerta/
+ejemplos/salidas/
+.claude/settings.local.json
+app/frontend/node_modules/
+app/frontend/dist/
+app/backend/datos/
+.pytest_cache/
+app/test-results/
+auditoria.jsonl

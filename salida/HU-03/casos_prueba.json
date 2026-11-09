@@ -1,0 +1,549 @@
+{
+  "historia": "HU-03",
+  "casos": [
+    {
+      "id": "CP-01",
+      "escenario": "Cambio exitoso de puesto y departamento",
+      "nivel": "api",
+      "precondiciones": [
+        "El backend está disponible en el puerto 8000",
+        "Existe un único empleado con numero_empleado \"EMP-0001\" y estado \"activo\", registrado con POST /api/empleados sobre una base vacía con nombre \"Ana López\", correo \"ana.lopez@empresa.com\", puesto \"Analista de datos\", departamento \"Tecnología\" y fecha_ingreso \"2024-03-01\"",
+        "Supuesto por pregunta abierta de los criterios: la edición se hace con PUT /api/empleados/{id} y cuerpo JSON"
+      ],
+      "pasos": [
+        "Obtener el id del empleado \"EMP-0001\" con GET /api/empleados",
+        "Enviar PUT /api/empleados/{id} con puesto \"Contadora\" y departamento \"Finanzas\"",
+        "Verificar que el código de respuesta es de éxito (2xx)",
+        "Enviar GET /api/empleados y verificar que el empleado \"EMP-0001\" tiene puesto \"Contadora\" y departamento \"Finanzas\"",
+        "Verificar que el empleado \"EMP-0001\" conserva correo \"ana.lopez@empresa.com\" y estado \"activo\"",
+        "Verificar que fecha_baja del empleado \"EMP-0001\" es null"
+      ],
+      "datos": {
+        "numero_empleado": "EMP-0001",
+        "correo_esperado": "ana.lopez@empresa.com",
+        "puesto": "Contadora",
+        "departamento": "Finanzas",
+        "codigo_esperado": "2xx",
+        "estado_esperado": "activo",
+        "fecha_baja_esperada": ""
+      },
+      "resultado_esperado": "La API responde con un código de éxito 2xx (el código exacto sigue sin definir en las preguntas abiertas) y el empleado queda con el puesto y departamento nuevos, el mismo correo, estado activo y sin fecha de baja."
+    },
+    {
+      "id": "CP-02",
+      "escenario": "Cambio exitoso de puesto y departamento",
+      "nivel": "e2e",
+      "precondiciones": [
+        "El frontend y el backend están disponibles",
+        "Existe un único empleado con numero_empleado \"EMP-0001\" y estado \"activo\", registrado con POST /api/empleados sobre una base vacía con nombre \"Ana López\", correo \"ana.lopez@empresa.com\", puesto \"Analista de datos\", departamento \"Tecnología\" y fecha_ingreso \"2024-03-01\""
+      ],
+      "pasos": [
+        "Obtener el id del empleado \"EMP-0001\" con GET /api/empleados",
+        "Abrir la pantalla del directorio y esperar a que tabla-empleados muestre fila-empleado-{id}",
+        "Hacer clic en editar-empleado-{id}",
+        "Borrar el contenido de empleado-puesto y escribir \"Contadora\"",
+        "Seleccionar \"Finanzas\" en empleado-departamento",
+        "Hacer clic en empleado-guardar",
+        "Verificar que mensaje-exito está visible, sin comprobar su texto porque sigue sin definir en las preguntas abiertas",
+        "Verificar que fila-empleado-{id} dentro de tabla-empleados contiene \"Contadora\" y \"Finanzas\"",
+        "Verificar que numero-empleado-{id} muestra \"EMP-0001\" y que estado-empleado-{id} muestra \"Activo\"",
+        "Enviar GET /api/empleados y verificar que el empleado conserva correo \"ana.lopez@empresa.com\" y que fecha_baja es null"
+      ],
+      "datos": {
+        "numero_empleado": "EMP-0001",
+        "correo_esperado": "ana.lopez@empresa.com",
+        "puesto": "Contadora",
+        "departamento": "Finanzas",
+        "estado_en_pantalla_esperado": "Activo",
+        "fecha_baja_esperada": ""
+      },
+      "resultado_esperado": "El directorio muestra al empleado EMP-0001 con puesto Contadora, departamento Finanzas y estado Activo; conserva el correo y no tiene fecha de baja."
+    },
+    {
+      "id": "CP-03",
+      "escenario": "Baja exitosa de un empleado que sigue en el directorio",
+      "nivel": "api",
+      "precondiciones": [
+        "El backend está disponible en el puerto 8000",
+        "Existe un único empleado con numero_empleado \"EMP-0001\" y estado \"activo\", registrado con POST /api/empleados sobre una base vacía con nombre \"Ana López\", correo \"ana.lopez@empresa.com\", puesto \"Analista de datos\", departamento \"Tecnología\" y fecha_ingreso \"2024-03-01\"",
+        "Supuesto por pregunta abierta de los criterios: la baja se hace con POST /api/empleados/{id}/baja y cuerpo JSON con fecha_baja"
+      ],
+      "pasos": [
+        "Obtener el id del empleado \"EMP-0001\" con GET /api/empleados",
+        "Enviar POST /api/empleados/{id}/baja con fecha_baja \"2024-09-30\"",
+        "Verificar que el código de respuesta es de éxito (2xx)",
+        "Enviar GET /api/empleados y verificar que la lista tiene 1 empleado",
+        "Verificar que el empleado \"EMP-0001\" tiene estado \"baja\" y fecha_baja \"2024-09-30\""
+      ],
+      "datos": {
+        "numero_empleado": "EMP-0001",
+        "fecha_ingreso": "2024-03-01",
+        "fecha_baja": "2024-09-30",
+        "codigo_esperado": "2xx",
+        "estado_esperado": "baja",
+        "cantidad_empleados_esperada": "1"
+      },
+      "resultado_esperado": "La API responde con un código de éxito 2xx y el empleado sigue en la lista con estado baja y fecha de baja 2024-09-30."
+    },
+    {
+      "id": "CP-04",
+      "escenario": "Baja exitosa de un empleado que sigue en el directorio",
+      "nivel": "e2e",
+      "precondiciones": [
+        "El frontend y el backend están disponibles",
+        "Existe un único empleado con numero_empleado \"EMP-0001\" y estado \"activo\", registrado con POST /api/empleados sobre una base vacía con nombre \"Ana López\", correo \"ana.lopez@empresa.com\", puesto \"Analista de datos\", departamento \"Tecnología\" y fecha_ingreso \"2024-03-01\""
+      ],
+      "pasos": [
+        "Obtener el id del empleado \"EMP-0001\" con GET /api/empleados",
+        "Abrir la pantalla del directorio y esperar a que tabla-empleados muestre fila-empleado-{id}",
+        "Hacer clic en baja-empleado-{id}",
+        "Escribir \"2024-09-30\" en empleado-fecha-baja",
+        "Hacer clic en confirmar-baja",
+        "Verificar que tabla-empleados contiene exactamente 1 fila fila-empleado-{id}",
+        "Verificar que numero-empleado-{id} muestra \"EMP-0001\" y que estado-empleado-{id} muestra \"Baja\"",
+        "Enviar GET /api/empleados y verificar que el empleado tiene estado \"baja\" y fecha_baja \"2024-09-30\""
+      ],
+      "datos": {
+        "numero_empleado": "EMP-0001",
+        "fecha_ingreso": "2024-03-01",
+        "fecha_baja": "2024-09-30",
+        "estado_esperado": "baja",
+        "estado_en_pantalla_esperado": "Baja",
+        "cantidad_filas_esperada": "1"
+      },
+      "resultado_esperado": "El directorio sigue mostrando 1 empleado, EMP-0001, marcado como Baja, y su fecha de baja queda guardada como 2024-09-30."
+    },
+    {
+      "id": "CP-05",
+      "escenario": "Baja con fecha igual a la fecha de ingreso",
+      "nivel": "api",
+      "precondiciones": [
+        "El backend está disponible en el puerto 8000",
+        "Existe un único empleado con numero_empleado \"EMP-0001\" y estado \"activo\", registrado con POST /api/empleados sobre una base vacía con nombre \"Ana López\", correo \"ana.lopez@empresa.com\", puesto \"Analista de datos\", departamento \"Tecnología\" y fecha_ingreso \"2024-03-01\"",
+        "Supuesto por pregunta abierta de los criterios: la baja se hace con POST /api/empleados/{id}/baja y cuerpo JSON con fecha_baja"
+      ],
+      "pasos": [
+        "Obtener el id del empleado \"EMP-0001\" con GET /api/empleados",
+        "Enviar POST /api/empleados/{id}/baja con fecha_baja \"2024-03-01\"",
+        "Verificar que el código de respuesta es de éxito (2xx)",
+        "Enviar GET /api/empleados y verificar que el empleado \"EMP-0001\" tiene estado \"baja\" y fecha_baja \"2024-03-01\""
+      ],
+      "datos": {
+        "numero_empleado": "EMP-0001",
+        "fecha_ingreso": "2024-03-01",
+        "fecha_baja": "2024-03-01",
+        "codigo_esperado": "2xx",
+        "estado_esperado": "baja"
+      },
+      "resultado_esperado": "La API acepta la fecha de baja igual a la de ingreso con un código 2xx y el empleado queda con estado baja y fecha de baja 2024-03-01."
+    },
+    {
+      "id": "CP-06",
+      "escenario": "Baja con fecha igual a la fecha de ingreso",
+      "nivel": "e2e",
+      "precondiciones": [
+        "El frontend y el backend están disponibles",
+        "Existe un único empleado con numero_empleado \"EMP-0001\" y estado \"activo\", registrado con POST /api/empleados sobre una base vacía con nombre \"Ana López\", correo \"ana.lopez@empresa.com\", puesto \"Analista de datos\", departamento \"Tecnología\" y fecha_ingreso \"2024-03-01\""
+      ],
+      "pasos": [
+        "Obtener el id del empleado \"EMP-0001\" con GET /api/empleados",
+        "Abrir la pantalla del directorio y esperar a que tabla-empleados muestre fila-empleado-{id}",
+        "Hacer clic en baja-empleado-{id}",
+        "Escribir \"2024-03-01\" en empleado-fecha-baja",
+        "Hacer clic en confirmar-baja",
+        "Verificar que estado-empleado-{id} muestra \"Baja\"",
+        "Enviar GET /api/empleados y verificar que el empleado tiene estado \"baja\" y fecha_baja \"2024-03-01\""
+      ],
+      "datos": {
+        "numero_empleado": "EMP-0001",
+        "fecha_ingreso": "2024-03-01",
+        "fecha_baja": "2024-03-01",
+        "estado_esperado": "baja",
+        "estado_en_pantalla_esperado": "Baja"
+      },
+      "resultado_esperado": "La pantalla marca al empleado como Baja y queda guardada la fecha de baja 2024-03-01."
+    },
+    {
+      "id": "CP-07",
+      "escenario": "El formulario de edición no permite cambiar número de empleado ni correo",
+      "nivel": "api",
+      "precondiciones": [
+        "El backend está disponible en el puerto 8000",
+        "Existe un único empleado con numero_empleado \"EMP-0001\" y estado \"activo\", registrado con POST /api/empleados sobre una base vacía con nombre \"Ana López\", correo \"ana.lopez@empresa.com\", puesto \"Analista de datos\", departamento \"Tecnología\" y fecha_ingreso \"2024-03-01\"",
+        "Supuesto por pregunta abierta de los criterios: la edición se hace con PUT /api/empleados/{id} y cuerpo JSON"
+      ],
+      "pasos": [
+        "Obtener el id del empleado \"EMP-0001\" con GET /api/empleados",
+        "Enviar PUT /api/empleados/{id} solo con puesto \"Analista de datos\" y departamento \"Tecnología\", los campos que el formulario sí permite cambiar",
+        "Verificar que el código de respuesta es de éxito (2xx)",
+        "Enviar GET /api/empleados y verificar que el empleado conserva numero_empleado \"EMP-0001\" y correo \"ana.lopez@empresa.com\""
+      ],
+      "datos": {
+        "numero_empleado_esperado": "EMP-0001",
+        "correo_esperado": "ana.lopez@empresa.com",
+        "puesto": "Analista de datos",
+        "departamento": "Tecnología",
+        "codigo_esperado": "2xx"
+      },
+      "resultado_esperado": "Una edición que no envía número de empleado ni correo tiene éxito y no los altera. Que los campos no admitan escritura solo se comprueba en el caso e2e CP-08."
+    },
+    {
+      "id": "CP-08",
+      "escenario": "El formulario de edición no permite cambiar número de empleado ni correo",
+      "nivel": "e2e",
+      "precondiciones": [
+        "El frontend y el backend están disponibles",
+        "Existe un único empleado con numero_empleado \"EMP-0001\" y estado \"activo\", registrado con POST /api/empleados sobre una base vacía con nombre \"Ana López\", correo \"ana.lopez@empresa.com\", puesto \"Analista de datos\", departamento \"Tecnología\" y fecha_ingreso \"2024-03-01\""
+      ],
+      "pasos": [
+        "Obtener el id del empleado \"EMP-0001\" con GET /api/empleados",
+        "Abrir la pantalla del directorio y esperar a que tabla-empleados muestre fila-empleado-{id}",
+        "Hacer clic en editar-empleado-{id}",
+        "Esperar a que empleado-puesto esté visible",
+        "Verificar que empleado-correo no permite escribir: el elemento no existe o está deshabilitado (disabled) o es de solo lectura (readonly)",
+        "Verificar que ningún campo editable del formulario (input, select o textarea sin disabled ni readonly) contiene el valor \"EMP-0001\", ya que las convenciones no definen un data-testid para numero_empleado en el formulario",
+        "Verificar que ningún campo editable del formulario contiene el valor \"ana.lopez@empresa.com\""
+      ],
+      "datos": {
+        "numero_empleado": "EMP-0001",
+        "correo": "ana.lopez@empresa.com"
+      },
+      "resultado_esperado": "El formulario de edición no ofrece ningún campo editable para el número de empleado ni para el correo."
+    },
+    {
+      "id": "CP-09",
+      "escenario": "La API no cambia el número de empleado ni el correo",
+      "nivel": "api",
+      "precondiciones": [
+        "El backend está disponible en el puerto 8000",
+        "Existe un único empleado con numero_empleado \"EMP-0001\" y estado \"activo\", registrado con POST /api/empleados sobre una base vacía con nombre \"Ana López\", correo \"ana.lopez@empresa.com\", puesto \"Analista de datos\", departamento \"Tecnología\" y fecha_ingreso \"2024-03-01\"",
+        "Supuesto por pregunta abierta de los criterios: la edición se hace con PUT /api/empleados/{id} y cuerpo JSON"
+      ],
+      "pasos": [
+        "Obtener el id del empleado \"EMP-0001\" con GET /api/empleados",
+        "Enviar PUT /api/empleados/{id} con numero_empleado \"EMP-0099\", correo \"ana.nueva@empresa.com\", puesto \"Analista de datos\" y departamento \"Tecnología\"",
+        "No verificar el código de respuesta, porque sigue sin definir en las preguntas abiertas si la API rechaza o ignora esos campos",
+        "Enviar GET /api/empleados y verificar que el empleado con ese id conserva numero_empleado \"EMP-0001\" y correo \"ana.lopez@empresa.com\"",
+        "Verificar que en la lista no hay ningún empleado con numero_empleado \"EMP-0099\" ni con correo \"ana.nueva@empresa.com\""
+      ],
+      "datos": {
+        "numero_empleado_enviado": "EMP-0099",
+        "correo_enviado": "ana.nueva@empresa.com",
+        "puesto": "Analista de datos",
+        "departamento": "Tecnología",
+        "numero_empleado_esperado": "EMP-0001",
+        "correo_esperado": "ana.lopez@empresa.com"
+      },
+      "resultado_esperado": "Sea cual sea el código de respuesta, el empleado EMP-0001 conserva su correo y no existe ningún empleado EMP-0099."
+    },
+    {
+      "id": "CP-10",
+      "escenario": "Error por puesto demasiado corto",
+      "nivel": "api",
+      "precondiciones": [
+        "El backend está disponible en el puerto 8000",
+        "Existe un único empleado con numero_empleado \"EMP-0001\" y estado \"activo\", registrado con POST /api/empleados sobre una base vacía con nombre \"Ana López\", correo \"ana.lopez@empresa.com\", puesto \"Analista de datos\", departamento \"Tecnología\" y fecha_ingreso \"2024-03-01\"",
+        "Supuesto por pregunta abierta de los criterios: la edición se hace con PUT /api/empleados/{id} y cuerpo JSON"
+      ],
+      "pasos": [
+        "Obtener el id del empleado \"EMP-0001\" con GET /api/empleados",
+        "Enviar PUT /api/empleados/{id} con puesto \"A\" y departamento \"Tecnología\"",
+        "Verificar que el código de respuesta es 422 y que la respuesta tiene la forma {\"detail\": \"mensaje en español\"}",
+        "Enviar GET /api/empleados y verificar que el empleado conserva puesto \"Analista de datos\""
+      ],
+      "datos": {
+        "puesto": "A",
+        "departamento": "Tecnología",
+        "codigo_esperado": "422",
+        "puesto_esperado": "Analista de datos"
+      },
+      "resultado_esperado": "La API responde 422 y el puesto del empleado no cambia."
+    },
+    {
+      "id": "CP-11",
+      "escenario": "Error por puesto demasiado corto",
+      "nivel": "e2e",
+      "precondiciones": [
+        "El frontend y el backend están disponibles",
+        "Existe un único empleado con numero_empleado \"EMP-0001\" y estado \"activo\", registrado con POST /api/empleados sobre una base vacía con nombre \"Ana López\", correo \"ana.lopez@empresa.com\", puesto \"Analista de datos\", departamento \"Tecnología\" y fecha_ingreso \"2024-03-01\""
+      ],
+      "pasos": [
+        "Obtener el id del empleado \"EMP-0001\" con GET /api/empleados",
+        "Abrir la pantalla del directorio y esperar a que tabla-empleados muestre fila-empleado-{id}",
+        "Hacer clic en editar-empleado-{id}",
+        "Borrar el contenido de empleado-puesto y escribir \"A\"",
+        "Seleccionar \"Tecnología\" en empleado-departamento",
+        "Hacer clic en empleado-guardar",
+        "Verificar que mensaje-error está visible y su texto incluye \"puesto\"",
+        "Enviar GET /api/empleados y verificar que el empleado conserva puesto \"Analista de datos\""
+      ],
+      "datos": {
+        "puesto": "A",
+        "departamento": "Tecnología",
+        "campo_a_corregir": "puesto",
+        "puesto_esperado": "Analista de datos"
+      },
+      "resultado_esperado": "La pantalla indica en mensaje-error que se debe corregir el campo puesto y el puesto del empleado no cambia."
+    },
+    {
+      "id": "CP-12",
+      "escenario": "Error por puesto vacío",
+      "nivel": "api",
+      "precondiciones": [
+        "El backend está disponible en el puerto 8000",
+        "Existe un único empleado con numero_empleado \"EMP-0001\" y estado \"activo\", registrado con POST /api/empleados sobre una base vacía con nombre \"Ana López\", correo \"ana.lopez@empresa.com\", puesto \"Analista de datos\", departamento \"Tecnología\" y fecha_ingreso \"2024-03-01\"",
+        "Supuesto por pregunta abierta de los criterios: la edición se hace con PUT /api/empleados/{id} y cuerpo JSON"
+      ],
+      "pasos": [
+        "Obtener el id del empleado \"EMP-0001\" con GET /api/empleados",
+        "Enviar PUT /api/empleados/{id} con puesto \"\" y departamento \"Tecnología\"",
+        "Verificar que el código de respuesta es 422 y que la respuesta tiene la forma {\"detail\": \"mensaje en español\"}",
+        "Enviar GET /api/empleados y verificar que el empleado conserva puesto \"Analista de datos\""
+      ],
+      "datos": {
+        "puesto": "",
+        "departamento": "Tecnología",
+        "codigo_esperado": "422",
+        "puesto_esperado": "Analista de datos"
+      },
+      "resultado_esperado": "La API responde 422 y el puesto del empleado no cambia."
+    },
+    {
+      "id": "CP-13",
+      "escenario": "Error por puesto vacío",
+      "nivel": "e2e",
+      "precondiciones": [
+        "El frontend y el backend están disponibles",
+        "Existe un único empleado con numero_empleado \"EMP-0001\" y estado \"activo\", registrado con POST /api/empleados sobre una base vacía con nombre \"Ana López\", correo \"ana.lopez@empresa.com\", puesto \"Analista de datos\", departamento \"Tecnología\" y fecha_ingreso \"2024-03-01\""
+      ],
+      "pasos": [
+        "Obtener el id del empleado \"EMP-0001\" con GET /api/empleados",
+        "Abrir la pantalla del directorio y esperar a que tabla-empleados muestre fila-empleado-{id}",
+        "Hacer clic en editar-empleado-{id}",
+        "Borrar el contenido de empleado-puesto y dejarlo vacío",
+        "Seleccionar \"Tecnología\" en empleado-departamento",
+        "Hacer clic en empleado-guardar",
+        "Verificar que mensaje-error está visible y su texto incluye \"puesto\"",
+        "Enviar GET /api/empleados y verificar que el empleado conserva puesto \"Analista de datos\""
+      ],
+      "datos": {
+        "puesto": "",
+        "departamento": "Tecnología",
+        "campo_a_corregir": "puesto",
+        "puesto_esperado": "Analista de datos"
+      },
+      "resultado_esperado": "La pantalla indica en mensaje-error que se debe corregir el campo puesto y el puesto del empleado no cambia."
+    },
+    {
+      "id": "CP-14",
+      "escenario": "Error por puesto de más de 60 caracteres",
+      "nivel": "api",
+      "precondiciones": [
+        "El backend está disponible en el puerto 8000",
+        "Existe un único empleado con numero_empleado \"EMP-0001\" y estado \"activo\", registrado con POST /api/empleados sobre una base vacía con nombre \"Ana López\", correo \"ana.lopez@empresa.com\", puesto \"Analista de datos\", departamento \"Tecnología\" y fecha_ingreso \"2024-03-01\"",
+        "Supuesto por pregunta abierta de los criterios: la edición se hace con PUT /api/empleados/{id} y cuerpo JSON"
+      ],
+      "pasos": [
+        "Obtener el id del empleado \"EMP-0001\" con GET /api/empleados",
+        "Enviar PUT /api/empleados/{id} con el puesto de 61 caracteres de los datos y departamento \"Tecnología\"",
+        "Verificar que el código de respuesta es 422 y que la respuesta tiene la forma {\"detail\": \"mensaje en español\"}",
+        "Enviar GET /api/empleados y verificar que el empleado conserva puesto \"Analista de datos\""
+      ],
+      "datos": {
+        "puesto": "Puesto-789Puesto-789Puesto-789Puesto-789Puesto-789Puesto-789P",
+        "longitud_puesto": "61",
+        "departamento": "Tecnología",
+        "codigo_esperado": "422",
+        "puesto_esperado": "Analista de datos"
+      },
+      "resultado_esperado": "La API responde 422 y el puesto del empleado no cambia."
+    },
+    {
+      "id": "CP-15",
+      "escenario": "Error por puesto de más de 60 caracteres",
+      "nivel": "e2e",
+      "precondiciones": [
+        "El frontend y el backend están disponibles",
+        "Existe un único empleado con numero_empleado \"EMP-0001\" y estado \"activo\", registrado con POST /api/empleados sobre una base vacía con nombre \"Ana López\", correo \"ana.lopez@empresa.com\", puesto \"Analista de datos\", departamento \"Tecnología\" y fecha_ingreso \"2024-03-01\""
+      ],
+      "pasos": [
+        "Obtener el id del empleado \"EMP-0001\" con GET /api/empleados",
+        "Abrir la pantalla del directorio y esperar a que tabla-empleados muestre fila-empleado-{id}",
+        "Hacer clic en editar-empleado-{id}",
+        "Borrar el contenido de empleado-puesto y escribir el puesto de 61 caracteres de los datos",
+        "Seleccionar \"Tecnología\" en empleado-departamento",
+        "Hacer clic en empleado-guardar",
+        "Verificar que mensaje-error está visible y su texto incluye \"puesto\"",
+        "Enviar GET /api/empleados y verificar que el empleado conserva puesto \"Analista de datos\""
+      ],
+      "datos": {
+        "puesto": "Puesto-789Puesto-789Puesto-789Puesto-789Puesto-789Puesto-789P",
+        "longitud_puesto": "61",
+        "departamento": "Tecnología",
+        "campo_a_corregir": "puesto",
+        "puesto_esperado": "Analista de datos"
+      },
+      "resultado_esperado": "La pantalla indica en mensaje-error que se debe corregir el campo puesto y el puesto del empleado no cambia."
+    },
+    {
+      "id": "CP-16",
+      "escenario": "Error por departamento fuera de la lista permitida",
+      "nivel": "api",
+      "precondiciones": [
+        "El backend está disponible en el puerto 8000",
+        "Existe un único empleado con numero_empleado \"EMP-0001\" y estado \"activo\", registrado con POST /api/empleados sobre una base vacía con nombre \"Ana López\", correo \"ana.lopez@empresa.com\", puesto \"Analista de datos\", departamento \"Tecnología\" y fecha_ingreso \"2024-03-01\"",
+        "Supuesto por pregunta abierta de los criterios: la edición se hace con PUT /api/empleados/{id} y cuerpo JSON"
+      ],
+      "pasos": [
+        "Obtener el id del empleado \"EMP-0001\" con GET /api/empleados",
+        "Enviar PUT /api/empleados/{id} con puesto \"Analista de datos\" y departamento \"Marketing\"",
+        "Verificar que el código de respuesta es 422 y que la respuesta tiene la forma {\"detail\": \"mensaje en español\"}",
+        "Enviar GET /api/empleados y verificar que el empleado conserva departamento \"Tecnología\""
+      ],
+      "datos": {
+        "puesto": "Analista de datos",
+        "departamento": "Marketing",
+        "codigo_esperado": "422",
+        "departamento_esperado": "Tecnología"
+      },
+      "resultado_esperado": "La API responde 422 y el departamento del empleado no cambia."
+    },
+    {
+      "id": "CP-17",
+      "escenario": "Error por departamento fuera de la lista permitida",
+      "nivel": "e2e",
+      "precondiciones": [
+        "El frontend y el backend están disponibles",
+        "Existe un único empleado con numero_empleado \"EMP-0001\" y estado \"activo\", registrado con POST /api/empleados sobre una base vacía con nombre \"Ana López\", correo \"ana.lopez@empresa.com\", puesto \"Analista de datos\", departamento \"Tecnología\" y fecha_ingreso \"2024-03-01\"",
+        "La prueba intercepta la respuesta de GET /api/departamentos para agregar \"Marketing\" a la lista, porque el catálogo real no permite elegirlo en pantalla"
+      ],
+      "pasos": [
+        "Obtener el id del empleado \"EMP-0001\" con GET /api/empleados",
+        "Abrir la pantalla del directorio y esperar a que tabla-empleados muestre fila-empleado-{id}",
+        "Hacer clic en editar-empleado-{id}",
+        "Dejar \"Analista de datos\" en empleado-puesto",
+        "Seleccionar \"Marketing\" en empleado-departamento",
+        "Hacer clic en empleado-guardar",
+        "Verificar que mensaje-error está visible y su texto incluye \"departamento\"",
+        "Enviar GET /api/empleados y verificar que el empleado conserva departamento \"Tecnología\""
+      ],
+      "datos": {
+        "puesto": "Analista de datos",
+        "departamento": "Marketing",
+        "campo_a_corregir": "departamento",
+        "departamento_esperado": "Tecnología"
+      },
+      "resultado_esperado": "La pantalla indica en mensaje-error que se debe corregir el campo departamento y el departamento del empleado no cambia."
+    },
+    {
+      "id": "CP-18",
+      "escenario": "Error por fecha de baja anterior a la fecha de ingreso",
+      "nivel": "api",
+      "precondiciones": [
+        "El backend está disponible en el puerto 8000",
+        "Existe un único empleado con numero_empleado \"EMP-0001\" y estado \"activo\", registrado con POST /api/empleados sobre una base vacía con nombre \"Ana López\", correo \"ana.lopez@empresa.com\", puesto \"Analista de datos\", departamento \"Tecnología\" y fecha_ingreso \"2024-03-01\"",
+        "Supuesto por pregunta abierta de los criterios: la baja se hace con POST /api/empleados/{id}/baja y cuerpo JSON con fecha_baja"
+      ],
+      "pasos": [
+        "Obtener el id del empleado \"EMP-0001\" con GET /api/empleados",
+        "Enviar POST /api/empleados/{id}/baja con fecha_baja \"2024-02-29\"",
+        "Verificar que el código de respuesta es 422 y que la respuesta tiene la forma {\"detail\": \"mensaje en español\"}",
+        "Enviar GET /api/empleados y verificar que el empleado conserva estado \"activo\" y que fecha_baja es null"
+      ],
+      "datos": {
+        "fecha_ingreso": "2024-03-01",
+        "fecha_baja": "2024-02-29",
+        "codigo_esperado": "422",
+        "estado_esperado": "activo",
+        "fecha_baja_esperada": ""
+      },
+      "resultado_esperado": "La API responde 422 y el empleado sigue activo y sin fecha de baja."
+    },
+    {
+      "id": "CP-19",
+      "escenario": "Error por fecha de baja anterior a la fecha de ingreso",
+      "nivel": "e2e",
+      "precondiciones": [
+        "El frontend y el backend están disponibles",
+        "Existe un único empleado con numero_empleado \"EMP-0001\" y estado \"activo\", registrado con POST /api/empleados sobre una base vacía con nombre \"Ana López\", correo \"ana.lopez@empresa.com\", puesto \"Analista de datos\", departamento \"Tecnología\" y fecha_ingreso \"2024-03-01\""
+      ],
+      "pasos": [
+        "Obtener el id del empleado \"EMP-0001\" con GET /api/empleados",
+        "Abrir la pantalla del directorio y esperar a que tabla-empleados muestre fila-empleado-{id}",
+        "Hacer clic en baja-empleado-{id}",
+        "Escribir \"2024-02-29\" en empleado-fecha-baja",
+        "Hacer clic en confirmar-baja",
+        "Verificar que mensaje-error está visible y su texto incluye \"fecha_baja\"",
+        "Verificar que estado-empleado-{id} muestra \"Activo\"",
+        "Enviar GET /api/empleados y verificar que el empleado conserva estado \"activo\" y que fecha_baja es null"
+      ],
+      "datos": {
+        "fecha_ingreso": "2024-03-01",
+        "fecha_baja": "2024-02-29",
+        "campo_a_corregir": "fecha_baja",
+        "estado_esperado": "activo",
+        "estado_en_pantalla_esperado": "Activo",
+        "fecha_baja_esperada": ""
+      },
+      "resultado_esperado": "La pantalla indica en mensaje-error que se debe corregir el campo fecha_baja y el empleado sigue activo y sin fecha de baja."
+    },
+    {
+      "id": "CP-20",
+      "escenario": "Error al editar a un empleado dado de baja",
+      "nivel": "api",
+      "precondiciones": [
+        "El backend está disponible en el puerto 8000",
+        "Existe un único empleado con numero_empleado \"EMP-0001\", registrado con POST /api/empleados sobre una base vacía con nombre \"Ana López\", correo \"ana.lopez@empresa.com\", puesto \"Analista de datos\", departamento \"Tecnología\" y fecha_ingreso \"2024-03-01\"",
+        "Supuesto por pregunta abierta de los criterios: la baja se hace con POST /api/empleados/{id}/baja y cuerpo JSON con fecha_baja, y la edición con PUT /api/empleados/{id} y cuerpo JSON",
+        "El empleado \"EMP-0001\" fue dado de baja con POST /api/empleados/{id}/baja y fecha_baja \"2024-09-30\""
+      ],
+      "pasos": [
+        "Obtener el id del empleado \"EMP-0001\" con GET /api/empleados",
+        "Enviar PUT /api/empleados/{id} con puesto \"Contadora\" y departamento \"Finanzas\"",
+        "Verificar que el código de respuesta es 409 y que detail es exactamente \"No se puede editar a un empleado dado de baja\"",
+        "Enviar GET /api/empleados y verificar que el empleado conserva puesto \"Analista de datos\" y departamento \"Tecnología\""
+      ],
+      "datos": {
+        "fecha_baja_previa": "2024-09-30",
+        "puesto": "Contadora",
+        "departamento": "Finanzas",
+        "codigo_esperado": "409",
+        "mensaje_esperado": "No se puede editar a un empleado dado de baja",
+        "puesto_esperado": "Analista de datos",
+        "departamento_esperado": "Tecnología"
+      },
+      "resultado_esperado": "La API responde 409 con el mensaje indicado y el empleado conserva su puesto y departamento."
+    },
+    {
+      "id": "CP-21",
+      "escenario": "Error al editar a un empleado dado de baja",
+      "nivel": "e2e",
+      "precondiciones": [
+        "El frontend y el backend están disponibles",
+        "Existe un único empleado con numero_empleado \"EMP-0001\", registrado con POST /api/empleados sobre una base vacía con nombre \"Ana López\", correo \"ana.lopez@empresa.com\", puesto \"Analista de datos\", departamento \"Tecnología\" y fecha_ingreso \"2024-03-01\"",
+        "Supuesto por pregunta abierta de los criterios: la baja se hace con POST /api/empleados/{id}/baja y cuerpo JSON con fecha_baja",
+        "El empleado \"EMP-0001\" fue dado de baja con POST /api/empleados/{id}/baja y fecha_baja \"2024-09-30\""
+      ],
+      "pasos": [
+        "Obtener el id del empleado \"EMP-0001\" con GET /api/empleados",
+        "Abrir la pantalla del directorio y esperar a que tabla-empleados muestre fila-empleado-{id}",
+        "Verificar que estado-empleado-{id} muestra \"Baja\"",
+        "Hacer clic en editar-empleado-{id}, que debe seguir disponible porque el criterio exige mostrar el mensaje al intentar la edición",
+        "Borrar el contenido de empleado-puesto y escribir \"Contadora\"",
+        "Seleccionar \"Finanzas\" en empleado-departamento",
+        "Hacer clic en empleado-guardar",
+        "Verificar que mensaje-error está visible y su texto es \"No se puede editar a un empleado dado de baja\"",
+        "Enviar GET /api/empleados y verificar que el empleado conserva puesto \"Analista de datos\" y departamento \"Tecnología\""
+      ],
+      "datos": {
+        "fecha_baja_previa": "2024-09-30",
+        "puesto": "Contadora",
+        "departamento": "Finanzas",
+        "mensaje_esperado": "No se puede editar a un empleado dado de baja",
+        "puesto_esperado": "Analista de datos",
+        "departamento_esperado": "Tecnología"
+      },
+      "resultado_esperado": "La pantalla muestra en mensaje-error el texto indicado y el empleado conserva su puesto y departamento."
+    }
+  ]
+}
